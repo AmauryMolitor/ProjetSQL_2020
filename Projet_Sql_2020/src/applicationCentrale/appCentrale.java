@@ -41,12 +41,16 @@ public class appCentrale {
 		System.out.println("Faites votre choix 😡 ");
 		do {
 			System.out.println("1 : Ajouter un local");
+			System.out.println("2 : Ajouter un examen");
 
 			int choix;
 			choix = Integer.parseInt(scanner.nextLine());
 			switch (choix) {
 			case 1:
 				main.ajouterLocal();
+				break;
+			case 2:
+				main.ajouterExamen();
 				break;
 			}
 
@@ -63,16 +67,13 @@ public class appCentrale {
 		System.out.println("Le local possède-t-il des machines : (true|false)");
 		Boolean machines = Boolean.parseBoolean(scanner.nextLine());
 
-		try {
-			/**		 
+		try {	 
 			PreparedStatement ps = mapStatement.get("insertLocal");
 			if (ps == null) {
 				ps = conn.prepareStatement(" SELECT projet.insertLocal(?, ?, ?);");
 				mapStatement.put("insertLocal", ps);
 			}
-			*/
-			PreparedStatement ps = conn.prepareStatement(" SELECT " + " projet.insertLocal(?, ?, ?);");
-			
+
 			ps.setString(1, nom);
 			ps.setInt(2, nbrPlace);
 			ps.setBoolean(3, machines);
@@ -91,6 +92,22 @@ public class appCentrale {
 			System.exit(1);
 
 		}
+	}
+	
+	private void ajouterExamen() {
+		try {
+			PreparedStatement ps = mapStatement.get("insertExamen");
+			if (ps == null) {
+				ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, ?, ?);");
+				mapStatement.put("insertLocal", ps);
+			}
+		} catch (SQLException se) {
+			System.out.println("Erreur lors de l'insertion !");
+			se.printStackTrace();
+			System.exit(1);
+
+		}
+		
 	}
 	
 	
