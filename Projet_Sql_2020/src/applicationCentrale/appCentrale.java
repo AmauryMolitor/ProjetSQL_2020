@@ -26,7 +26,7 @@ public class appCentrale {
 		}
 
 		String url = "jdbc:postgresql://localhost/projetSQL_2020";
-		Connection conn = null;
+		this.conn = null;
 
 		try {
 			conn = DriverManager.getConnection(url, "postgres", "kimilapatate");
@@ -95,15 +95,21 @@ public class appCentrale {
 		Boolean machines = Boolean.parseBoolean(scanner.nextLine());
 
 		try {	 
+			/*
 			PreparedStatement ps = mapStatement.get("insertLocal");
 			if (ps == null) {
-				ps = conn.prepareStatement(" SELECT projet.insertLocal(?, ?, ?);");
+				ps = conn.prepareStatement(" SELECT " + " projet.insertLocal(?, ?, ?);");
+				System.out.println(ps);
 				mapStatement.put("insertLocal", ps);
 			}
+			*/
+			PreparedStatement ps = conn.prepareStatement(" SELECT " + " projet.insertLocal(?, ?, ?);");
 
 			ps.setString(1, nom);
 			ps.setInt(2, nbrPlace);
 			ps.setBoolean(3, machines);
+			
+			System.out.println(ps);
 
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
