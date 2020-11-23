@@ -45,7 +45,13 @@ public class appCentrale {
 		do {
 			System.out.println("1 : Ajouter un local");
 			System.out.println("2 : Ajouter un examen");
-
+			System.out.println("3 : Encoder l'heure d'un examen");
+			System.out.println("4 : Réserver un local pour un examen");
+			System.out.println("5 : Visualiser l'horaire d'un bloc");
+			System.out.println("6 : Visualiser les réservations d'un local");
+			System.out.println("7 : Visualiser les examens pas complètements réservés");
+			System.out.println("8 : Visualiser le nombre d'examens pas complètement réservés pour chaque bloc");
+			
 			int choix;
 			choix = Integer.parseInt(scanner.nextLine());
 			switch (choix) {
@@ -54,6 +60,24 @@ public class appCentrale {
 				break;
 			case 2:
 				main.ajouterExamen();
+				break;
+			case 3: 
+				main.encoderHeureExamen();
+				break;
+			case 4:
+				main.reserverLocal();
+				break;
+			case 5:
+				main.visualiserHoraireBloc();
+				break;
+			case 6:
+				main.visualiserReservationsLocal();
+				break;
+			case 7:
+				main.visualiserExamensPasComplets();
+				break;
+			case 8:
+				main.visualiserNombreExamenPasCompletsParBloc();
 				break;
 			}
 
@@ -154,6 +178,36 @@ public class appCentrale {
 			System.exit(1);
 
 		}
+		
+	}
+	
+	private void encoderHeureExamen() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void reserverLocal() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void visualiserHoraireBloc() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void visualiserReservationsLocal() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void visualiserExamensPasComplets() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void visualiserNombreExamenPasCompletsParBloc() {
+		// TODO Auto-generated method stub
 		
 	}
 	
