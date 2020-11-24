@@ -262,16 +262,24 @@ CREATE OR REPLACE VIEW projet.displayTousExamens AS
 	FROM projet.examens e;
 
 
+--Visualiser tous les examens d'un bloc en particulier (app centrale 5)
 CREATE OR REPLACE VIEW projet.displayExamens AS
-	SELECT e.heure_debut AS "Heure debut", e.code AS "Code examen" , e.nom AS "Nom examen", 
-		COUNT(r.local_id) AS "Nombre de local"	
-	FROM projet.reservations r, projet.examens e
-	WHERE e.examen_id = r.examen_id
-	GROUP By e.examen_id
+	SELECT b.code AS "code_bloc", e.heure_debut AS "heure_debut", e.code AS "code_examen", e.nom AS "nom_examen", COUNT(r.local_id) AS "nbr_locaux"
+	from projet.examens e LEFT OUTER JOIN projet.reservations r on r.examen_id = e.examen_id, projet.blocs b
+	WHERE b.bloc_id = e.bloc
+	GROUP BY e.examen_id, b.code
 	ORDER BY e.heure_debut;
+SELECT heure_debut, code_examen, nbr_locaux from projet.displayExamens WHERE code_bloc LIKE 'BIN3'
 
 
-
+--Visualiser tous les examens d'un bloc (app centrale 6)
+CREATE OR REPLACE VIEW projet.displayExamensParLocal AS
+	SELECT e.heure_debut AS "heure_debut", e.code AS "code_examen", e.nom AS "nom_examen", l.nom AS "nom_local"
+	from projet.examens e, projet.reservations r, projet.locaux l
+	WHERE r.examen_id = e.examen_id and l.local_id = r.local_id
+	GROUP BY e.examen_id, l.local_id
+	ORDER BY e.heure_debut;
+SELECT heure_debut, code_examen, nom_examen from projet.displayExamensParLocal WHERE nom_local LIKE 'A023'
 
 
 --TRIGGER----------------------------------------------------------------

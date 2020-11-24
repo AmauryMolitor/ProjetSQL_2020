@@ -15,7 +15,7 @@ public class appCentrale {
 
 	public static Scanner scanner = new Scanner(System.in);
 	private Connection conn;
-	private HashMap<String, PreparedStatement> mapStatement;
+	private HashMap<String, PreparedStatement> mapStatement = new HashMap<String, PreparedStatement>();
 
 	public appCentrale() {
 		try {
@@ -42,6 +42,7 @@ public class appCentrale {
 		System.out.println("Bienvenue dans le Projet de Gestion de Base de Données 2020");
 		System.out.println();
 		System.out.println("Faites votre choix 😡 ");
+		int choix;
 		do {
 			System.out.println("1 : Ajouter un local");
 			System.out.println("2 : Ajouter un examen");
@@ -52,7 +53,6 @@ public class appCentrale {
 			System.out.println("7 : Visualiser les examens pas complètements réservés");
 			System.out.println("8 : Visualiser le nombre d'examens pas complètement réservés pour chaque bloc");
 			
-			int choix;
 			choix = Integer.parseInt(scanner.nextLine());
 			switch (choix) {
 			case 1:
@@ -80,8 +80,7 @@ public class appCentrale {
 				main.visualiserNombreExamenPasCompletsParBloc();
 				break;
 			}
-
-		} while (true);
+		} while (choix > 0 && choix <9);
 
 	}
 
@@ -94,17 +93,13 @@ public class appCentrale {
 		System.out.println("Le local possède-t-il des machines : (true|false)");
 		Boolean machines = Boolean.parseBoolean(scanner.nextLine());
 
-		try {	 
-			/*
+		try {	 			
 			PreparedStatement ps = mapStatement.get("insertLocal");
-			if (ps == null) {
+			if(ps == null) {
 				ps = conn.prepareStatement(" SELECT " + " projet.insertLocal(?, ?, ?);");
-				System.out.println(ps);
 				mapStatement.put("insertLocal", ps);
 			}
-			*/
-			PreparedStatement ps = conn.prepareStatement(" SELECT " + " projet.insertLocal(?, ?, ?);");
-
+			
 			ps.setString(1, nom);
 			ps.setInt(2, nbrPlace);
 			ps.setBoolean(3, machines);
@@ -198,7 +193,35 @@ public class appCentrale {
 	}
 	
 	private void visualiserHoraireBloc() {
-		// TODO Auto-generated method stub
+		System.out.println("\nVisualiser l'horaire d'examen d'un bloc");
+		System.out.println("Code du bloc : ");
+		String bloc = scanner.nextLine();
+		
+		System.out.println("Heure de début | Code | Nom | Nombre de locaux");
+		try {	 
+			PreparedStatement ps = mapStatement.get("listExamsBloc");
+			
+			if(ps == null) {
+				ps = conn.prepareStatement(" SELECT " + " heure_debut, code_examen, nom_examen, nbr_locaux from projet.displayExamens WHERE code_bloc LIKE (?);");
+				mapStatement.put("listExamsBloc", ps);
+			}
+			
+			ps.setString(1, bloc);
+			
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					System.out.println(" " + rs.getTimestamp(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | " + rs.getInt(4) );
+			} catch (SQLException se) {
+				se.printStackTrace();
+				System.exit(1);
+			}
+
+		} catch (SQLException se) {
+			System.out.println("Erreur lors de l'affichage !");
+			se.printStackTrace();
+			System.exit(1);
+
+		}
 		
 	}
 	

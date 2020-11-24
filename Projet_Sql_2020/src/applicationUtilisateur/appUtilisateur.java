@@ -22,7 +22,7 @@ public class appUtilisateur {
 		}
 
 		String url = "jdbc:postgresql://localhost/projetSQL_2020";
-		Connection conn = null;
+		this.conn = null;
 
 		try {
 			conn = DriverManager.getConnection(url, "postgres", "kimilapatate");
