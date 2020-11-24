@@ -233,11 +233,11 @@ public class appCentrale {
 		
 		System.out.println("Heure de début | Code | Nom");
 		try {	 
-			PreparedStatement ps = mapStatement.get("listExamsBloc");
+			PreparedStatement ps = mapStatement.get("listExamsLocal");
 			
 			if(ps == null) {
 				ps = conn.prepareStatement(" SELECT " + " heure_debut, code_examen, nom_examen from projet.displayExamensParLocal  WHERE nom_local  LIKE (?);");
-				mapStatement.put("listExamsBloc", ps);
+				mapStatement.put("listExamsLocal", ps);
 			}
 			
 			ps.setString(1, local);
@@ -260,7 +260,30 @@ public class appCentrale {
 	}
 	
 	private void visualiserExamensPasComplets() {
-		// TODO Auto-generated method stub
+		System.out.println("\nVisualiser les examens pas complets");		
+		System.out.println("Id Examen | Code | Nom | Id Bloc | Sur machine | Heure de début | Durée");
+		try {	 
+			PreparedStatement ps = mapStatement.get("listExamsPasComplets");
+			
+			if(ps == null) {
+				ps = conn.prepareStatement(" SELECT * from projet.displayExamensNonComplets;");
+				mapStatement.put("listExamsPasComplets", ps);
+			}
+
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					System.out.println(" " + rs.getInt(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | " + rs.getInt(4) + " | " + rs.getBoolean(5) + " | " + rs.getTimestamp(6) + " | " + rs.getString(7));
+			} catch (SQLException se) {
+				se.printStackTrace();
+				System.exit(1);
+			}
+
+		} catch (SQLException se) {
+			System.out.println("Erreur lors de l'affichage !");
+			se.printStackTrace();
+			System.exit(1);
+
+		}
 		
 	}
 	
