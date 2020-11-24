@@ -179,80 +179,7 @@ SELECT projet.inscriptionBloc(4, 'BIN3')
 
 --DISPLAY-------------------------------------------------------------
 
---5. Visualiser l'horaire d'examen pour un bloc particulier
 
-CREATE OR REPLACE FUNCTION projet.displayExamensParBloc(_code_bloc VARCHAR) RETURNS SETOF RECORD AS $$
-DECLARE
-	examen RECORD;
-	sortie RECORD;
-	nbr_salles INTEGER =0;
-	
-BEGIN
-	FOR examen in 	
-		SELECT e.* FROM projet.examens e, projet.blocs b	
-			WHERE e.bloc = b.bloc_id AND b.code LIKE  _code_bloc
-			ORDER BY e.heure_debut LOOP 
-					
-			SELECT count(r.local_id)
-			FROM projet.reservations r
-			WHERE examen.examen_id = r.examen_id into nbr_salles;
-					
-		SELECT examen.heure_debut, examen.code, examen.nom, nbr_salles INTO sortie;
-		RETURN NEXT sortie;
-	END LOOP;
-	RETURN;
-END;
-$$ LANGUAGE 'plpgsql';
-
-SELECT * FROM projet.displayExamensParBloc('BIN3') t(heure_debut TIMESTAMP, code VARCHAR, nom VARCHAR, nbr_salles INTEGER);
-
-
-
---6. Visualiser toutes les réservations d’examen d’un local particulier
-
-CREATE OR REPLACE FUNCTION projet.displayExamensParLocal(_nom_local VARCHAR) RETURNS SETOF RECORD AS $$
-DECLARE
-	examen RECORD;
-	sortie RECORD;
-	
-BEGIN
-	FOR examen in 	SELECT e.* FROM projet.examens e, projet.locaux l, projet.reservations r
-					WHERE e.examen_id = r.examen_id AND r.local_id = l.local_id AND l.nom LIKE  _nom_local
-					ORDER BY e.heure_debut LOOP 
-										
-				SELECT examen.heure_debut, examen.code, examen.nom INTO sortie;
-			RETURN NEXT sortie;
-	END LOOP;
-	RETURN;
-END;
-$$ LANGUAGE 'plpgsql';
-
-SELECT * FROM projet.displayExamensParLocal('A023') t(heure_debut TIMESTAMP, code VARCHAR, nom VARCHAR);
-
-
---7. Visualiser tous les examens qui ne sont pas encore complètement réservés (triés par code).
-
-CREATE OR REPLACE FUNCTION projet.displayExamensNonComplet() RETURNS SETOF RECORD AS $$
-DECLARE
-	examen RECORD;
-	sortie RECORD;
-	
-BEGIN
-	FOR examen in 	SELECT e.* FROM projet.examens e
-					WHERE e.completement_reserve = 'false'
-					ORDER BY e.code LOOP 
-										
-				SELECT examen.heure_debut, examen.code, examen.nom INTO sortie;
-			RETURN NEXT sortie;
-	END LOOP;
-	RETURN;
-END;
-$$ LANGUAGE 'plpgsql';
-
-SELECT * FROM projet.displayExamensNonComplet() t(heure_debut TIMESTAMP, code VARCHAR, nom VARCHAR);
-
-
-	 
 
 --VIEW----------------------------------------------------------
 
@@ -269,7 +196,7 @@ CREATE OR REPLACE VIEW projet.displayExamens AS
 	WHERE b.bloc_id = e.bloc
 	GROUP BY e.examen_id, b.code
 	ORDER BY e.heure_debut;
-SELECT heure_debut, code_examen, nbr_locaux from projet.displayExamens WHERE code_bloc LIKE 'BIN3'
+--SELECT heure_debut, code_examen, nbr_locaux from projet.displayExamens WHERE code_bloc LIKE 'BIN3'
 
 
 --Visualiser tous les examens d'un bloc (app centrale 6)
@@ -279,7 +206,17 @@ CREATE OR REPLACE VIEW projet.displayExamensParLocal AS
 	WHERE r.examen_id = e.examen_id and l.local_id = r.local_id
 	GROUP BY e.examen_id, l.local_id
 	ORDER BY e.heure_debut;
-SELECT heure_debut, code_examen, nom_examen from projet.displayExamensParLocal WHERE nom_local LIKE 'A023'
+--SELECT heure_debut, code_examen, nom_examen from projet.displayExamensParLocal WHERE nom_local LIKE 'A023'
+
+
+--Visualiser tous les examens pas complets (app cenrale 7)
+--CREATE OR REPLACE VIEW projet.displayExamensNonComplets AS 
+	SELECT e.*
+	FROM projet.examens e
+	WHERE e.completement_reserve = 'false'
+	ORDER BY e.code;
+	
+--SELECT * from projet.displayExamensNonComplets
 
 
 --TRIGGER----------------------------------------------------------------

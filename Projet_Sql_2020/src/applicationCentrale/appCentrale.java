@@ -44,6 +44,7 @@ public class appCentrale {
 		System.out.println("Faites votre choix 😡 ");
 		int choix;
 		do {
+			System.out.println(" ");
 			System.out.println("1 : Ajouter un local");
 			System.out.println("2 : Ajouter un examen");
 			System.out.println("3 : Encoder l'heure d'un examen");
@@ -226,7 +227,35 @@ public class appCentrale {
 	}
 	
 	private void visualiserReservationsLocal() {
-		// TODO Auto-generated method stub
+		System.out.println("\nVisualiser l'horaire d'examen d'un local");
+		System.out.println("Code du local : ");
+		String local = scanner.nextLine();
+		
+		System.out.println("Heure de début | Code | Nom");
+		try {	 
+			PreparedStatement ps = mapStatement.get("listExamsBloc");
+			
+			if(ps == null) {
+				ps = conn.prepareStatement(" SELECT " + " heure_debut, code_examen, nom_examen from projet.displayExamensParLocal  WHERE nom_local  LIKE (?);");
+				mapStatement.put("listExamsBloc", ps);
+			}
+			
+			ps.setString(1, local);
+			
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					System.out.println(" " + rs.getTimestamp(1) + " | " + rs.getString(2) + " | " + rs.getString(3));
+			} catch (SQLException se) {
+				se.printStackTrace();
+				System.exit(1);
+			}
+
+		} catch (SQLException se) {
+			System.out.println("Erreur lors de l'affichage !");
+			se.printStackTrace();
+			System.exit(1);
+
+		}
 		
 	}
 	
