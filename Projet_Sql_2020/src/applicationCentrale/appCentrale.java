@@ -104,8 +104,6 @@ public class appCentrale {
 			ps.setString(1, nom);
 			ps.setInt(2, nbrPlace);
 			ps.setBoolean(3, machines);
-			
-			System.out.println(ps);
 
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
