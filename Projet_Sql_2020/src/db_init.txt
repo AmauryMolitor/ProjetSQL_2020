@@ -223,7 +223,7 @@ CREATE OR REPLACE VIEW projet.displayExamensParLocal AS
 
 --NE FONCTIONNE PAS
 
-CREATE OR REPLACE FUNCTION projet.triggerExamenNonComplet() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION ExamenNonComplet() RETURNS TRIGGER AS $$
 DECLARE
 	record RECORD;
 	total INTEGER;
@@ -240,6 +240,117 @@ BEGIN
 
 END;
 $$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trigger_ ExamenNonComplet AFTER INSERT ON projet.examens 
+
+FOR EACH ROW EXECUTE PROCEDURE projet.ExamenNonComplet(); 
+
+
+
+
+
+
+-- TRIGGER POUR ENCODAGE HEURE EXAMEN
+
+CREATE OR REPLACE FUNCTION verif_heure_exam() RETURNS TRIGGER AS $$ 
+
+DECLARE
+BEGIN
+
+IF NOT EXISTS ( SELECT * FROM projet.inscriptions i WHERE i.examen_id = NEW.examen_id)
+
+THEN
+	RAISE 'erreur : aucune inscription pour cet examen.'
+
+RETURN NEW; 
+
+END; 
+
+$$ LANGUAGE plpgsql; 
+
+CREATE TRIGGER trigger_verif_heure_exam AFTER UPDATE ON projet.examens 
+
+FOR EACH ROW EXECUTE PROCEDURE projet.verif_heure_exam(); 
+
+
+
+
+-- TRIGGER POUR VERIFICATION RESA LOCAL
+
+CREATE OR REPLACE FUNCTION verifLocal() RETURNS TRIGGER AS $$ 
+
+DECLARE 
+verif_exam RECORD;
+exam RECORD;
+local RECORD;
+
+BEGIN
+local := (SELECT * FROM projet.locaux l WHERE l.local_id = NEW.local_id);
+exam := (SELECT * FROM projet.examens e WHERE e.examen_id = NEW.examen_id);
+
+IF
+
+local.machines = FALSE AND exam.sur_machine = TRUE
+
+THEN 
+
+
+	RAISE 'erreur :examen sur machine, besoin d'un local équipé !';
+
+
+END IF;
+
+IF
+
+exam.completement_reserve = TRUE
+
+THEN
+
+	RAISE 'erreur : examen déjà complètement réservé ';
+
+END IF;
+
+IF 
+
+exam.heure_debut IS NULL
+
+THEN 
+
+	RAISE 'erreur : Heure de début d'exam pas encore fixée!;
+END IF;
+
+IF EXISTS ( SELECT * FROM projet.reservations r WHERE r.local_id = NEW.local_id)
+
+THEN
+
+FOR verif_exam IN SELECT * FROM projet.reservations r WHERE r.local_id = NEW.local_id LOOP
+
+IF ( SELECT e.heure_debut FROM projet.examens e WHERE e.examen_id = verif_exam.examen_id ) = exam.heure_debut 
+
+THEN
+	RAISE 'erreur: examen déjà en cours dans ce local à ce moment là.'
+
+END IF;
+	
+END  LOOP;	.
+
+
+END IF;
+
+RETURN NEW; 
+
+END; 
+
+$$ LANGUAGE plpgsql; 
+
+
+CREATE TRIGGER trigger_verif_local AFTER INSERT ON projet.reservations 
+
+FOR EACH ROW EXECUTE PROCEDURE projet.verif_local(); 
+
+
+
 
 --INSERT--------------------------------------------------------------
 
