@@ -25,11 +25,13 @@ public class appCentrale {
 			System.exit(1);
 		}
 
-		String url = "jdbc:postgresql://localhost/projetSQL_2020";
+		String urlAmaury =  "jdbc:postgresql://localhost/projetSQL_2020";
+		String urlAxel = "jdbc:postgresql://localhost/Projet2020";		
 		this.conn = null;
 
 		try {
-			conn = DriverManager.getConnection(url, "postgres", "kimilapatate");
+			//conn = DriverManager.getConnection(urlAmaury, "postgres", "kimilapatate");
+			conn = DriverManager.getConnection(urlAxel, "postgres", "axel123");
 		} catch (SQLException e) {
 			System.out.println("Impossible de joindre le server !");
 			System.exit(1);
