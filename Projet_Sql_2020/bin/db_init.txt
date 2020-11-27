@@ -75,7 +75,7 @@ $$ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION projet.insertExam(_code VARCHAR(6), _nom VARCHAR(100), _bloc VARCHAR, _sur_machine BOOLEAN,
+CREATE OR REPLACE FUNCTION projet.insertExamen(_code VARCHAR(6), _nom VARCHAR(100), _bloc VARCHAR, _sur_machine BOOLEAN,
 						_duree INTERVAL) RETURNS INTEGER AS $$
 DECLARE 
 	e_id INTEGER;
