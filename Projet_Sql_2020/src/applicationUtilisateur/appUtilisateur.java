@@ -135,36 +135,61 @@ public class appUtilisateur {
 			System.exit(1);
 
 		}
+		menu();
 		
 	}
 	
 	private void menu() {
-		System.out.println("1 : Visualiser les examens");
-		System.out.println("2 : S'inscrire à un examen");
-		System.out.println("3 : S'inscrire à tous les examens");
-		System.out.println("4 : Voir son horaire");
-		
-		int choix = Integer.parseInt(scanner.nextLine());
-		switch(choix) {
-		case 1:
-			voirExamens();
-			break;
-		case 2:
-			inscriptionExamen();
-			break;
-		case 3:
-			inscriptionsTousExamens();
-			break;
-		case 4:
-			voirHoraire();
-			break;
-		}
+		int choix;
+		do {
+			System.out.println("");
+			System.out.println("1 : Visualiser les examens");
+			System.out.println("2 : S'inscrire à un examen");
+			System.out.println("3 : S'inscrire à tous les examens");
+			System.out.println("4 : Voir son horaire");
+			
+			choix = Integer.parseInt(scanner.nextLine());
+			switch(choix) {
+			case 1:
+				voirExamens();
+				break;
+			case 2:
+				inscriptionExamen();
+				break;
+			case 3:
+				inscriptionsTousExamens();
+				break;
+			case 4:
+				voirHoraire();
+				break;
+			}
+		}while (choix > 0 && choix <4);
 	}
 
 
 	private void voirExamens() {
-		// TODO Auto-generated method stub
-		
+		System.out.println("\nAfficher les examens");
+		try {	 			
+			PreparedStatement ps = mapStatement.get("listExams");
+			if(ps == null) {
+				ps = conn.prepareStatement(" SELECT e.code, e.nom, b.code, e.duree FROM projet.examens e, projet.blocs b WHERE b.bloc_id = e.bloc;");
+				mapStatement.put("listExams", ps);
+			}
+
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					System.out.println(" " + rs.getString(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | " + rs.getString(4));
+			} catch (SQLException se) {
+				se.printStackTrace();
+				System.exit(1);
+			}
+
+		} catch (SQLException se) {
+			System.out.println("Erreur lors de l'affichage !");
+			se.printStackTrace();
+			System.exit(1);
+
+		}
 	}
 
 
