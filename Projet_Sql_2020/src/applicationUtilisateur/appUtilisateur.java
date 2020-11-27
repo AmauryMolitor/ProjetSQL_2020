@@ -48,6 +48,7 @@ public class appUtilisateur {
 			break;
 		case 2:
 			main.connection();
+			break;
 		}
 	}
 
@@ -60,7 +61,7 @@ public class appUtilisateur {
 		String nom = scanner.nextLine();
 		System.out.println("Mot de passe : ");
 		String mdp = scanner.nextLine();
-		System.out.println("Bloc : ");
+		System.out.println("Code du bloc : ");
 		String bloc = scanner.nextLine();
 		String sel = BCrypt.gensalt();
 		String mdpCrypte = BCrypt.hashpw(mdp, sel);
@@ -138,7 +139,53 @@ public class appUtilisateur {
 	}
 	
 	private void menu() {
+		System.out.println("1 : Visualiser les examens");
+		System.out.println("2 : S'inscrire à un examen");
+		System.out.println("3 : S'inscrire à tous les examens");
+		System.out.println("4 : Voir son horaire");
+		
+		int choix = Integer.parseInt(scanner.nextLine());
+		switch(choix) {
+		case 1:
+			voirExamens();
+			break;
+		case 2:
+			inscriptionExamen();
+			break;
+		case 3:
+			inscriptionsTousExamens();
+			break;
+		case 4:
+			voirHoraire();
+			break;
+		}
+	}
+
+
+	private void voirExamens() {
+		// TODO Auto-generated method stub
 		
 	}
+
+
+	private void inscriptionExamen() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void inscriptionsTousExamens() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void voirHoraire() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
 	
 }

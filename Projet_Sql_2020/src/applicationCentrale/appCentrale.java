@@ -69,16 +69,16 @@ public class appCentrale {
 				main.reserverLocal();
 				break;
 			case 5:
-				main.visualiserHoraireBloc();
+				main.voirHoraireBloc();
 				break;
 			case 6:
-				main.visualiserReservationsLocal();
+				main.voirReservationsLocal();
 				break;
 			case 7:
-				main.visualiserExamensPasComplets();
+				main.voirExamensPasComplets();
 				break;
 			case 8:
-				main.visualiserNombreExamenPasCompletsParBloc();
+				main.voirNombreExamenPasCompletsParBloc();
 				break;
 			}
 		} while (choix > 0 && choix <9);
@@ -191,7 +191,7 @@ public class appCentrale {
 		
 	}
 	
-	private void visualiserHoraireBloc() {
+	private void voirHoraireBloc() {
 		System.out.println("\nVisualiser l'horaire d'examen d'un bloc");
 		System.out.println("Code du bloc : ");
 		String bloc = scanner.nextLine();
@@ -224,7 +224,7 @@ public class appCentrale {
 		
 	}
 	
-	private void visualiserReservationsLocal() {
+	private void voirReservationsLocal() {
 		System.out.println("\nVisualiser l'horaire d'examen d'un local");
 		System.out.println("Code du local : ");
 		String local = scanner.nextLine();
@@ -257,7 +257,7 @@ public class appCentrale {
 		
 	}
 	
-	private void visualiserExamensPasComplets() {
+	private void voirExamensPasComplets() {
 		System.out.println("\nVisualiser les examens pas complets");		
 		System.out.println("Id Examen | Code | Nom | Id Bloc | Sur machine | Heure de début | Durée");
 		try {	 
@@ -285,7 +285,7 @@ public class appCentrale {
 		
 	}
 	
-	private void visualiserNombreExamenPasCompletsParBloc() {
+	private void voirNombreExamenPasCompletsParBloc() {
 		// TODO Auto-generated method stub
 		
 	}
