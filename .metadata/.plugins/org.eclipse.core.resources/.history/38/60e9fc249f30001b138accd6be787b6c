@@ -14,7 +14,7 @@ public class appUtilisateur {
 	private Connection conn;
 	private HashMap<String, PreparedStatement> mapStatement = new HashMap<String, PreparedStatement>();
 	private int idUser;
-	private PreparedStatement inscriptionEtudiant,connexionEtudiant,voirExamen,inscriptionExamen;
+	private PreparedStatement inscriptionEtudiant;
 
 	public appUtilisateur() throws SQLException {
 		try {
@@ -36,9 +36,6 @@ public class appUtilisateur {
 			System.exit(1);
 		}
 		  this.inscriptionEtudiant = conn.prepareStatement(" SELECT projet.insertEtudiants(?, ?, ?, ?);");
-		  this.connexionEtudiant = conn.prepareStatement(" SELECT e.* FROM projet.etudiants e WHERE e.nom LIKE (?) ;");
-		  this.voirExamen =  conn.prepareStatement(" SELECT e.code, e.nom, b.code, e.duree FROM projet.examens e, projet.blocs b WHERE b.bloc_id = e.bloc;");
-		  this.inscriptionExamen = conn.prepareStatement("SELECT projet.inscriptionUnExamen(?, ?);");
 	}
 	
 	
@@ -119,9 +116,9 @@ public class appUtilisateur {
 				mapStatement.put("getEtudiant", ps);
 			}
 			
-			connexionEtudiant.setString(1, nom);
+			ps.setString(1, nom);
 
-			try (ResultSet rs = connexionEtudiant.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
 					mdpCrypte = rs.getString(4);
 					if(!BCrypt.checkpw(mdp, mdpCrypte)) {
@@ -183,7 +180,7 @@ public class appUtilisateur {
 				mapStatement.put("listExams", ps);
 			}
 
-			try (ResultSet rs = voirExamen.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next())
 					System.out.println(" " + rs.getString(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | " + rs.getString(4));
 			} catch (SQLException se) {
@@ -203,11 +200,16 @@ public class appUtilisateur {
 	private void inscriptionExamen() {
 		System.out.println("\nInscription à un examen");
 		System.out.println("Code de l'examen : ");
-		String examen = scanner.nextLine();		
+		String examen = scanner.nextLine();
+		
 		try {
-						
-			inscriptionExamen.setInt(1, idUser);
-			inscriptionExamen.setString(2, examen);
+			PreparedStatement ps = mapStatement.get("inscription");
+			if(ps == null) {
+				ps = conn.prepareStatement("SELECT projet.inscriptionUnExamen(?, ?);");
+				mapStatement.put("inscription", ps);		
+			}
+			ps.setInt(1, idUser);
+			ps.setString(2, examen);
 			
 		} catch (SQLException se) {
 			System.out.println("Erreur lors de l'insertion !");

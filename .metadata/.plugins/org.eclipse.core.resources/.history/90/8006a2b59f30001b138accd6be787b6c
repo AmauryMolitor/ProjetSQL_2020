@@ -203,11 +203,16 @@ public class appUtilisateur {
 	private void inscriptionExamen() {
 		System.out.println("\nInscription à un examen");
 		System.out.println("Code de l'examen : ");
-		String examen = scanner.nextLine();		
+		String examen = scanner.nextLine();
+		
 		try {
-						
-			inscriptionExamen.setInt(1, idUser);
-			inscriptionExamen.setString(2, examen);
+			PreparedStatement ps = mapStatement.get("inscription");
+			if(ps == null) {
+				ps = conn.prepareStatement("SELECT projet.inscriptionUnExamen(?, ?);");
+				mapStatement.put("inscription", ps);		
+			}
+			ps.setInt(1, idUser);
+			ps.setString(2, examen);
 			
 		} catch (SQLException se) {
 			System.out.println("Erreur lors de l'insertion !");
