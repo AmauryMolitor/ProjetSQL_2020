@@ -14,9 +14,8 @@ public class appUtilisateur {
 	private Connection conn;
 	private HashMap<String, PreparedStatement> mapStatement = new HashMap<String, PreparedStatement>();
 	private int idUser;
-	private PreparedStatement inscriptionEtudiant;
 
-	public appUtilisateur() throws SQLException {
+	public appUtilisateur() {
 		try {
 			Class.forName("org.postgresql.Driver");
 		} catch (ClassNotFoundException e) {
@@ -35,11 +34,10 @@ public class appUtilisateur {
 			System.out.println("Impossible de joindre le server !");
 			System.exit(1);
 		}
-		  this.inscriptionEtudiant = conn.prepareStatement(" SELECT projet.insertEtudiants(?, ?, ?, ?);");
 	}
 	
 	
-	public static void main(String[] args) throws InstantiationException, IllegalAccessException, SQLException {
+	public static void main(String[] args) throws InstantiationException, IllegalAccessException {
 		appUtilisateur main = new appUtilisateur();
 		
 		System.out.println("1 : S'inscrire");
@@ -73,16 +71,16 @@ public class appUtilisateur {
 		try {	 			
 			PreparedStatement ps = mapStatement.get("inscription");
 			if(ps == null) {
-				ps = conn.prepareStatement(" SELECT projet.insertEtudiants(?, ?, ?, ?);");
+				ps = conn.prepareStatement(" SELECT " + " projet.insertEtudiants(?, ?, ?, ?);");
 				mapStatement.put("inscription", ps);
 			}
 			
-			inscriptionEtudiant.setString(1, email);
-			inscriptionEtudiant.setString(2, nom);
-			inscriptionEtudiant.setString(3, mdpCrypte);
-			inscriptionEtudiant.setString(4, bloc);
+			ps.setString(1, email);
+			ps.setString(2, nom);
+			ps.setString(3, mdpCrypte);
+			ps.setString(4, bloc);
 			
-			try (ResultSet rs = inscriptionEtudiant.executeQuery()) {
+			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next())
 					idUser = rs.getInt(1);
 					System.out.println("Votre inscription a bien été réalisée, votre id est : " + idUser);
