@@ -194,7 +194,25 @@ public class appUtilisateur {
 
 
 	private void inscriptionExamen() {
-		// TODO Auto-generated method stub
+		System.out.println("\nInscription à un examen");
+		System.out.println("Code de l'examen : ");
+		String examen = scanner.nextLine();
+		
+		try {
+			PreparedStatement ps = mapStatement.get("inscription");
+			if(ps == null) {
+				ps = conn.prepareStatement("SELECT projet.inscriptionUnExamen(?, ?);");
+				mapStatement.put("inscription", ps);		
+			}
+			ps.setInt(1, idUser);
+			ps.setString(2, examen);
+			
+		} catch (SQLException se) {
+			System.out.println("Erreur lors de l'insertion !");
+			se.printStackTrace();
+			System.exit(1);
+
+		}
 		
 	}
 
