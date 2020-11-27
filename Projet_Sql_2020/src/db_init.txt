@@ -71,7 +71,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT projet.insertLocal('B021', 100, false);
+--SELECT projet.insertLocal('B021', 100, false);
 
 
 
@@ -358,21 +358,28 @@ insert into projet.formations values (default, 'info', 'ipl');
 insert into projet.blocs values (default, 'BIN3', 1, default);
 --insert into projet.examens values ( default, 'IPL123', 'examen de sql', 1, true, '2020-12-12 10:00:00', INTERVAL '3' HOUR, default);
 
-insert into projet.locaux values (default, 'A023', 30, false);
+insert into projet.locaux values (default, 'A023', 30, true);
 
 --insert into projet.reservations values (1,1);
 
 --insert into projet.etudiants values (default, 'jean', 'jean@gmail.com', 'mdp', 1);
 
 --insert into projet.inscriptions values (1, 1);
-
- SELECT projet.insertExam('IPL148', 'examen de sql', 'BIN3', true,INTERVAL '3' HOUR, false);
- SELECT projet.insertExam('IPL149', 'examen de sql2', 'BIN3', true,INTERVAL '3' HOUR, false);
+ insert into projet.examens values (DEFAULT,'IPL146', 'examen de java',1,true,'2020-12-12 10:00:00',INTERVAL '3' HOUR,false);
+ insert into projet.examens values (DEFAULT,'IPL147', 'examen de java2',1,true,'2020-12-12 10:00:00',INTERVAL '3' HOUR,false);
+ SELECT projet.insertExam('IPL148', 'examen de sql', 'BIN3', true,INTERVAL '3' HOUR,false);
+ SELECT projet.insertExam('IPL149', 'examen de sql2', 'BIN3', false,INTERVAL '3' HOUR, false);
  SELECT projet.insertEtudiants('a@gmail.com', 'etudiant1', 'mdp', 'BIN3');
  SELECT projet.insertEtudiants('b@gmail.com', 'etudiant2', 'mdp', 'BIN3');
  SELECT projet.insertEtudiants('c@gmail.com', 'etudiant3', 'mdp', 'BIN3');
  SELECT projet.insertInscription(1,'IPL148');
  SELECT projet.inscriptionUnExamen(2,'IPL148');
  SELECT projet.inscriptionExamensBloc(3, 'BIN3');
- 
- 
+
+
+
+
+
+
+
+
