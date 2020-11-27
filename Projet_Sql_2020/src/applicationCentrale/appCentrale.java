@@ -30,8 +30,8 @@ public class appCentrale {
 		this.conn = null;
 
 		try {
-			//conn = DriverManager.getConnection(urlAmaury, "postgres", "kimilapatate");
-			conn = DriverManager.getConnection(urlAxel, "postgres", "axel123");
+			conn = DriverManager.getConnection(urlAmaury, "postgres", "kimilapatate");
+			//conn = DriverManager.getConnection(urlAxel, "postgres", "axel123");
 		} catch (SQLException e) {
 			System.out.println("Impossible de joindre le server !");
 			System.exit(1);
@@ -126,44 +126,41 @@ public class appCentrale {
 	private void ajouterExamen() {
 		System.out.println("\nAjouter un examen");
 		System.out.println("Code de l'examen : ");
-		String code = scanner.nextLine();
+		String code = "IPL654"; //scanner.nextLine();
 		System.out.println("Nom de l'examen : ");
-		String nom = scanner.nextLine();
+		String nom = "allo"; //scanner.nextLine();
 		System.out.println("Bloc de l'examen : ");
-		String bloc = scanner.nextLine();
+		String bloc = "BIN3"; //scanner.nextLine();
 		System.out.println("Examen sur machines : (true|false)");
-		Boolean machines = Boolean.parseBoolean(scanner.nextLine());
-		System.out.println("Heure de début :");
-		Timestamp debut = null;
-		try {
-		    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-		    Date parsedDate = (Date) dateFormat.parse(scanner.nextLine());
-		    debut = new java.sql.Timestamp(parsedDate.getTime());
-		} catch(Exception e) {
-			
-		}
+		Boolean machines = true; //Boolean.parseBoolean(scanner.nextLine());
 		System.out.println("Durée de l'examen : (heures)");
-		int heures = Integer.parseInt(scanner.nextLine());
+		int heures = 3; //Integer.parseInt(scanner.nextLine());
 		System.out.println("Durée de l'examen : (minutes)");
-		int minutes = Integer.parseInt(scanner.nextLine());
+		int minutes = 0; //Integer.parseInt(scanner.nextLine());
 		
-		if(heures != 0) 
+		if(heures > 0) 
 			minutes += heures*60;
 		
-		String interval = "INTERVAL " + minutes + " MINUTES";
+		String interval = "INTERVAL '" + minutes + "' MINUTE";
+		System.out.println(interval);
+		int interv = minutes;
 		
 		try {
 			PreparedStatement ps = mapStatement.get("insertExamen");
 			if (ps == null) {
-				ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, ?, ?);");
-				mapStatement.put("insertLocal", ps);
+				//ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, INTERVAL '?' MINUTE);");
+				//ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, ?::INTERVAL);");
+				ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, ?);");
+				mapStatement.put("insertExamen", ps);
 			}
 			ps.setString(1, code);
 			ps.setString(2, nom);
 			ps.setString(3, bloc);
 			ps.setBoolean(4, machines);
-			ps.setTimestamp(5, debut);
-			ps.setString(6, interval);
+			//ps.setString(5, interval);
+			ps.setObject(5, interval);
+			//ps.setInt(5, interv);
+			System.out.println(ps);
 			
 			try (ResultSet rs = ps.executeQuery()){
 				if(rs.next())
