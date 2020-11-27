@@ -158,23 +158,22 @@ $$ LANGUAGE plpgsql;
 -- SELECT projet.inscriptionUnExamen(3,'IPL148');
 		
 
---InscriptionBloc(id_etudiant INTEGER, id_bloc)
-CREATE OR REPLACE FUNCTION projet.inscriptionExamensBloc(_id_etudiant INTEGER, _bloc VARCHAR) RETURNS VOID AS $$ 
+CREATE OR REPLACE FUNCTION projet.inscriptionExamensBloc(_id_etudiant INTEGER) RETURNS VOID AS $$ 
 DECLARE 
-	b_id INTEGER;
-	exam RECORD; 
+    b_id INTEGER;
+    exam RECORD; 
 BEGIN 
-	SELECT bloc_id 
-	FROM projet.blocs b
-	WHERE b.code LIKE _bloc into b_id;	
+    SELECT b.bloc_id 
+    FROM projet.blocs b, projet.etudiants e
+    WHERE b.bloc_id = e.bloc AND e.bloc = _id_etudiant into b_id;
 
-	FOR exam IN SELECT e.examen_id FROM projet.examens e WHERE e.bloc = b_id  LOOP 
-		INSERT INTO projet.inscriptions VALUES (exam.examen_id,_id_etudiant); 
-	END LOOP; 
+    FOR exam IN SELECT e.examen_id FROM projet.examens e WHERE e.bloc = b_id  LOOP 
+        INSERT INTO projet.inscriptions VALUES (exam.examen_id,_id_etudiant); 
+    END LOOP; 
 END; 
 $$ LANGUAGE plpgsql; 
 
--- SELECT projet.inscriptionBloc(4, 'BIN3');
+-- SELECT projet.inscriptionExamensBloc(4);
 
 
 --DISPLAY-------------------------------------------------------------
