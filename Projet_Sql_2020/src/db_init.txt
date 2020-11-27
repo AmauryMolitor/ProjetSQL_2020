@@ -111,7 +111,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT projet.insertEtudiants('a@gmail.com', 'etudiant1', 'mdp', 'BIN3')
+SELECT projet.insertEtudiants('a@gmail.com', 'etudiant1', 'mdp', 'BIN3');
 
 
 --EN DOUBLE----------------------------------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT projet.insertInscription(1,'IPL148')
+SELECT projet.insertInscription(1,'IPL148');
 
 
 
@@ -155,7 +155,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT projet.inscriptionUnExamen(3,'IPL148')
+SELECT projet.inscriptionUnExamen(3,'IPL148');
 		
 
 --InscriptionBloc(id_etudiant INTEGER, id_bloc)
@@ -174,7 +174,7 @@ BEGIN
 END; 
 $$ LANGUAGE plpgsql; 
 
-SELECT projet.inscriptionBloc(4, 'BIN3')
+SELECT projet.inscriptionBloc(4, 'BIN3');
 
 
 --DISPLAY-------------------------------------------------------------
