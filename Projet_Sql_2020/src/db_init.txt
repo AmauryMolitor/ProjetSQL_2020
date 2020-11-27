@@ -75,7 +75,7 @@ SELECT projet.insertLocal('B021', 100, false);
 
 
 
-CREATE OR REPLACE FUNCTION projet.insertExam(_code VARCHAR(6), _nom VARCHAR(100), _bloc VARCHAR, _sur_machine BOOLEAN, _heure_debut TIMESTAMP, 
+CREATE OR REPLACE FUNCTION projet.insertExam(_code VARCHAR(6), _nom VARCHAR(100), _bloc VARCHAR, _sur_machine BOOLEAN,
 						_duree INTERVAL, _completement_reserve BOOLEAN) RETURNS INTEGER AS $$
 DECLARE 
 	e_id INTEGER;
@@ -87,12 +87,12 @@ BEGIN
 	WHERE b.code LIKE _bloc into b_id;
 
 	INSERT INTO projet.examens
-	VALUES (DEFAULT, _code, _nom, b_id, _sur_machine, _heure_debut, _duree, _completement_reserve) RETURNING examen_id into e_id;
+	VALUES (DEFAULT, _code, _nom, b_id, _sur_machine,null, _duree, _completement_reserve) RETURNING examen_id into e_id;
 	RETURN e_id;
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT projet.insertExam('IPL126', 'examen de sql', 'BIN3', true, '2020-12-12 10:00:00', INTERVAL '3' HOUR, false);
+--SELECT projet.insertExam('IPL126', 'examen de sql', 'BIN3', true, '2020-12-12 10:00:00', INTERVAL '3' HOUR, false);
 
 
 
@@ -111,7 +111,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT projet.insertEtudiants('a@gmail.com', 'etudiant1', 'mdp', 'BIN3');
+-- SELECT projet.insertEtudiants('a@gmail.com', 'etudiant1', 'mdp', 'BIN3');
 
 
 --EN DOUBLE----------------------------------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT projet.insertInscription(1,'IPL148');
+-- SELECT projet.insertInscription(1,'IPL148');
 
 
 
@@ -155,7 +155,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT projet.inscriptionUnExamen(3,'IPL148');
+-- SELECT projet.inscriptionUnExamen(3,'IPL148');
 		
 
 --InscriptionBloc(id_etudiant INTEGER, id_bloc)
@@ -174,7 +174,7 @@ BEGIN
 END; 
 $$ LANGUAGE plpgsql; 
 
-SELECT projet.inscriptionBloc(4, 'BIN3');
+-- SELECT projet.inscriptionBloc(4, 'BIN3');
 
 
 --DISPLAY-------------------------------------------------------------
@@ -241,10 +241,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE TRIGGER trigger_ExamenNonComplet AFTER INSERT ON projet.examens 
 
-CREATE TRIGGER trigger_ ExamenNonComplet AFTER INSERT ON projet.examens 
-
-FOR EACH ROW EXECUTE PROCEDURE projet.ExamenNonComplet(); 
+FOR EACH ROW EXECUTE PROCEDURE ExamenNonComplet(); 
 
 
 
@@ -261,7 +260,9 @@ BEGIN
 IF NOT EXISTS ( SELECT * FROM projet.inscriptions i WHERE i.examen_id = NEW.examen_id)
 
 THEN
-	RAISE 'erreur : aucune inscription pour cet examen.'
+	RAISE 'erreur : aucune inscription pour cet examen.';
+
+END IF;
 
 RETURN NEW; 
 
@@ -271,32 +272,31 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trigger_verif_heure_exam AFTER UPDATE ON projet.examens 
 
-FOR EACH ROW EXECUTE PROCEDURE projet.verif_heure_exam(); 
+FOR EACH ROW EXECUTE PROCEDURE verif_heure_exam(); 
 
 
 
 
 -- TRIGGER POUR VERIFICATION RESA LOCAL
 
-CREATE OR REPLACE FUNCTION verifLocal() RETURNS TRIGGER AS $$ 
+CREATE OR REPLACE FUNCTION verif_local() RETURNS TRIGGER AS $$ 
 
 DECLARE 
 verif_exam RECORD;
 exam RECORD;
-local RECORD;
+tulpe_local RECORD;
 
 BEGIN
-local := (SELECT * FROM projet.locaux l WHERE l.local_id = NEW.local_id);
-exam := (SELECT * FROM projet.examens e WHERE e.examen_id = NEW.examen_id);
+ SELECT l.local_id,l.nom,l.nb_places,l.machines FROM projet.locaux l WHERE l.local_id = NEW.local_id INTO tulpe_local;
+ SELECT * FROM projet.examens e WHERE e.examen_id = NEW.examen_id INTO exam;
 
 IF
 
-local.machines = FALSE AND exam.sur_machine = TRUE
+tulpe_local.machines = FALSE AND exam.sur_machine = TRUE
 
 THEN 
 
-
-	RAISE 'erreur :examen sur machine, besoin d'un local équipé !';
+	RAISE 'erreur :examen sur machine, besoin d un local équipé !';
 
 
 END IF;
@@ -317,7 +317,7 @@ exam.heure_debut IS NULL
 
 THEN 
 
-	RAISE 'erreur : Heure de début d'exam pas encore fixée!;
+	RAISE 'erreur : Heure de début d exam pas encore fixée!';
 END IF;
 
 IF EXISTS ( SELECT * FROM projet.reservations r WHERE r.local_id = NEW.local_id)
@@ -329,11 +329,11 @@ FOR verif_exam IN SELECT * FROM projet.reservations r WHERE r.local_id = NEW.loc
 IF ( SELECT e.heure_debut FROM projet.examens e WHERE e.examen_id = verif_exam.examen_id ) = exam.heure_debut 
 
 THEN
-	RAISE 'erreur: examen déjà en cours dans ce local à ce moment là.'
+	RAISE 'erreur: examen déjà en cours dans ce local à ce moment là.';
 
 END IF;
 	
-END  LOOP;	.
+END  LOOP;	
 
 
 END IF;
@@ -347,7 +347,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trigger_verif_local AFTER INSERT ON projet.reservations 
 
-FOR EACH ROW EXECUTE PROCEDURE projet.verif_local(); 
+FOR EACH ROW EXECUTE PROCEDURE verif_local(); 
 
 
 
@@ -356,24 +356,23 @@ FOR EACH ROW EXECUTE PROCEDURE projet.verif_local();
 
 insert into projet.formations values (default, 'info', 'ipl');
 insert into projet.blocs values (default, 'BIN3', 1, default);
-insert into projet.examens values ( default, 'IPL123', 'examen de sql', 1, true, '2020-12-12 10:00:00', INTERVAL '3' HOUR, default);
+--insert into projet.examens values ( default, 'IPL123', 'examen de sql', 1, true, '2020-12-12 10:00:00', INTERVAL '3' HOUR, default);
 
-insert into projet.locaux values (default, 'A023', 30, true);
+insert into projet.locaux values (default, 'A023', 30, false);
 
-insert into projet.reservations values (1,1);
+--insert into projet.reservations values (1,1);
 
-insert into projet.etudiants values (default, 'jean', 'jean@gmail.com', 'mdp', 1);
+--insert into projet.etudiants values (default, 'jean', 'jean@gmail.com', 'mdp', 1);
 
-insert into projet.inscriptions values (1, 1);
+--insert into projet.inscriptions values (1, 1);
 
-
-
-
-
-
-
-
-
-
-
-
+ SELECT projet.insertExam('IPL148', 'examen de sql', 'BIN3', true,INTERVAL '3' HOUR, false);
+ SELECT projet.insertExam('IPL149', 'examen de sql2', 'BIN3', true,INTERVAL '3' HOUR, false);
+ SELECT projet.insertEtudiants('a@gmail.com', 'etudiant1', 'mdp', 'BIN3');
+ SELECT projet.insertEtudiants('b@gmail.com', 'etudiant2', 'mdp', 'BIN3');
+ SELECT projet.insertEtudiants('c@gmail.com', 'etudiant3', 'mdp', 'BIN3');
+ SELECT projet.insertInscription(1,'IPL148');
+ SELECT projet.inscriptionUnExamen(2,'IPL148');
+ SELECT projet.inscriptionExamensBloc(3, 'BIN3');
+ 
+ 
