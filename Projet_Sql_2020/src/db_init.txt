@@ -176,6 +176,29 @@ $$ LANGUAGE plpgsql;
 -- SELECT projet.inscriptionExamensBloc(4);
 
 
+CREATE OR REPLACE FUNCTION projet.reserverLocal(_code_exam VARCHAR, _code_local varchar) RETURNS VOID AS $$
+DECLARE 
+	e_id INTEGER;
+	l_id INTEGER;
+BEGIN
+	SELECT e.examen_id FROM projet.examens e WHERE e.code = _code_exam into e_id;
+	SELECT l.local_id FROM projet.locaux l WHERE l.nom = _code_local into l_id;
+	
+	IF e_id IS NULL
+	THEN 
+		RAISE 'erreur : pas d examens avec ce code';
+	END IF;
+	
+	IF l_id IS NULL
+	THEN 
+		RAISE 'erreur : pas de local avec ce code';
+	END IF;
+	
+	INSERT INTO projet.reservations VALUES (l_id, e_id);
+END;
+$$ LANGUAGE plpgsql;
+--SELECT projet.reserverLocal('IPL146', 'A023');
+
 --DISPLAY-------------------------------------------------------------
 
 
