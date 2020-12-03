@@ -164,7 +164,7 @@ public class appCentrale {
 			
 			try (ResultSet rs = ps.executeQuery()){
 				if(rs.next())
-					System.out.println("Votre examen a bien été ajoutée, son id est : " +rs.getInt(1) );
+					System.out.println("Votre concert a bien été ajoutée, son id est : " +rs.getInt(1) );
 				} 
 			catch (SQLException se) {
 				se.printStackTrace();
@@ -181,13 +181,7 @@ public class appCentrale {
 	}
 	
 	private void encoderHeureExamen() {
-		System.out.println("\nEncode l'heure de l'examen");
-		System.out.println("Code de l'examen : ");
-		String code ="IPL654"; scanner.nextLine();
-		System.out.println("Durée de l'examen : (heures)");
-		int heure = Integer.parseInt(scanner.nextLine());
-		System.out.println("Durée de l'examen : (minutes)");
-		int minutes = Integer.parseInt(scanner.nextLine());
+		// TODO Auto-generated method stub
 		
 	}
 
