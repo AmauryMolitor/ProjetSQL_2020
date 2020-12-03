@@ -31,7 +31,7 @@ CREATE TABLE projet.examens(
 
 CREATE TABLE projet.etudiants(
 	etudiant_id SERIAL PRIMARY KEY,
-	nom VARCHAR(100) CHECK (nom<>'') NOT NULL,
+	nom VARCHAR(100) UNIQUE CHECK (nom<>'') NOT NULL,
 	email VARCHAR(100) CHECK (email SIMILAR TO '%_@_%._%') NOT NULL UNIQUE,
 	mdp VARCHAR(100) CHECK (mdp<>'') NOT NULL,
 	bloc INTEGER REFERENCES projet.blocs(bloc_id) NOT NULL
@@ -201,6 +201,35 @@ $$ LANGUAGE plpgsql;
 
 --DISPLAY-------------------------------------------------------------
 
+
+CREATE OR REPLACE FUNCTION projet.displayHoraire( _id_etudiant INTEGER) RETURNS SETOF RECORD AS $$
+DECLARE
+	sep VARCHAR;
+	texte VARCHAR;
+	sortie RECORD;
+	examen RECORD;
+	locaux RECORD;
+	heure_fin INTERVAL;
+BEGIN
+	FOR examen IN 	SELECT DISTINCT e.* FROM projet.examens e, projet.inscriptions i
+					WHERE _id_etudiant = i.etudiant_id AND i.examen_id = e.examen_id
+	LOOP
+		texte:=''; sep:='';
+		FOR locaux IN 	
+			SELECT l.* 
+			FROM projet.locaux l, projet.examens e LEFT OUTER JOIN projet.reservations r on e.examen_id = r.examen_id
+			WHERE r.local_id = l.local_id  AND e.examen_id = examen.examen_id
+			LOOP 	texte:=texte || sep || locaux.nom ;
+            		sep:=' + ';
+			END LOOP;
+			SELECT examen.code, examen.nom, b.code, examen.heure_debut, texte INTO sortie FROM projet.blocs b WHERE examen.bloc = b.bloc_id;
+	RETURN NEXT sortie;
+	END LOOP;
+RETURN;
+END;
+$$ LANGUAGE 'plpgsql';
+
+SELECT projet.displayHoraire(1);
 
 
 --VIEW----------------------------------------------------------

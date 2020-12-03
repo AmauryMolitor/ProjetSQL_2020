@@ -246,7 +246,32 @@ public class appUtilisateur {
 	}
 
 	private void voirHoraire() {
-		// TODO Auto-generated method stub
+		System.out.println("\nVoir son horaire");
+
+		try {
+			PreparedStatement ps = mapStatement.get("voirHoraire");
+			if (ps == null) {
+				ps = conn.prepareStatement(" SELECT projet.displayHoraire(?);");
+				mapStatement.put("voirHoraire", ps);
+			}
+
+			ps.setInt(1, idUser);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					System.out.println(" " + rs.getString(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | "
+							+ rs.getString(4) + " | " + rs.getString(5));
+			} catch (SQLException se) {
+				se.printStackTrace();
+				System.exit(1);
+			}
+
+		} catch (SQLException se) {
+			System.out.println("Erreur lors de l'affichage !");
+			se.printStackTrace();
+			System.exit(1);
+
+		}
 
 	}
 
