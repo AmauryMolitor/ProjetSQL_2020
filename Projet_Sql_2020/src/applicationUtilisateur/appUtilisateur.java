@@ -14,7 +14,7 @@ public class appUtilisateur {
 	private Connection conn;
 	private HashMap<String, PreparedStatement> mapStatement = new HashMap<String, PreparedStatement>();
 	private int idUser;
-	private PreparedStatement inscriptionEtudiant,connexionEtudiant,voirExamen,inscriptionExamen;
+	private PreparedStatement inscriptionEtudiant, connexionEtudiant, voirExamen, inscriptionExamen;
 
 	public appUtilisateur() throws SQLException {
 		try {
@@ -24,32 +24,32 @@ public class appUtilisateur {
 			System.exit(1);
 		}
 
-		String urlAmaury =  "jdbc:postgresql://localhost/projetSQL_2020";
+		String urlAmaury = "jdbc:postgresql://localhost/projetSQL_2020";
 		String urlAxel = "jdbc:postgresql://localhost/Projet2020";
 		this.conn = null;
 
 		try {
-			//conn = DriverManager.getConnection(urlAmaury, "postgres", "kimilapatate");
-			conn = DriverManager.getConnection(urlAxel, "postgres", "axel123");
+			conn = DriverManager.getConnection(urlAmaury, "postgres", "kimilapatate");
+			//conn = DriverManager.getConnection(urlAxel, "postgres", "axel123");
 		} catch (SQLException e) {
 			System.out.println("Impossible de joindre le server !");
 			System.exit(1);
 		}
-		  this.inscriptionEtudiant = conn.prepareStatement(" SELECT projet.insertEtudiants(?, ?, ?, ?);");
-		  this.connexionEtudiant = conn.prepareStatement(" SELECT e.* FROM projet.etudiants e WHERE e.nom LIKE (?) ;");
-		  this.voirExamen =  conn.prepareStatement(" SELECT e.code, e.nom, b.code, e.duree FROM projet.examens e, projet.blocs b WHERE b.bloc_id = e.bloc;");
-		  this.inscriptionExamen = conn.prepareStatement("SELECT projet.inscriptionUnExamen(?, ?);");
+		this.inscriptionEtudiant = conn.prepareStatement(" SELECT projet.insertEtudiants(?, ?, ?, ?);");
+		this.connexionEtudiant = conn.prepareStatement(" SELECT e.* FROM projet.etudiants e WHERE e.nom LIKE (?) ;");
+		this.voirExamen = conn.prepareStatement(
+				" SELECT e.code, e.nom, b.code, e.duree FROM projet.examens e, projet.blocs b WHERE b.bloc_id = e.bloc;");
+		this.inscriptionExamen = conn.prepareStatement("SELECT projet.inscriptionUnExamen(?, ?);");
 	}
-	
-	
+
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, SQLException {
 		appUtilisateur main = new appUtilisateur();
-		
+
 		System.out.println("1 : S'inscrire");
 		System.out.println("2 : Se connecter");
-		
+
 		int choix = Integer.parseInt(scanner.nextLine());
-		switch(choix) {
+		switch (choix) {
 		case 1:
 			main.inscription();
 			break;
@@ -58,7 +58,6 @@ public class appUtilisateur {
 			break;
 		}
 	}
-
 
 	private void inscription() {
 		System.out.println("\nInscription");
@@ -72,23 +71,23 @@ public class appUtilisateur {
 		String bloc = scanner.nextLine();
 		String sel = BCrypt.gensalt();
 		String mdpCrypte = BCrypt.hashpw(mdp, sel);
-		
-		try {	 			
+
+		try {
 			PreparedStatement ps = mapStatement.get("inscription");
-			if(ps == null) {
+			if (ps == null) {
 				ps = conn.prepareStatement(" SELECT projet.insertEtudiants(?, ?, ?, ?);");
 				mapStatement.put("inscription", ps);
 			}
-			
+
 			inscriptionEtudiant.setString(1, email);
 			inscriptionEtudiant.setString(2, nom);
 			inscriptionEtudiant.setString(3, mdpCrypte);
 			inscriptionEtudiant.setString(4, bloc);
-			
+
 			try (ResultSet rs = inscriptionEtudiant.executeQuery()) {
 				if (rs.next())
 					idUser = rs.getInt(1);
-					System.out.println("Votre inscription a bien été réalisée, votre id est : " + idUser);
+				System.out.println("Votre inscription a bien été réalisée, votre id est : " + idUser);
 			} catch (SQLException se) {
 				se.printStackTrace();
 				System.exit(1);
@@ -100,9 +99,8 @@ public class appUtilisateur {
 			System.exit(1);
 
 		}
-		menu();	
+		menu();
 	}
-
 
 	private void connection() {
 		String mdpCrypte;
@@ -111,26 +109,26 @@ public class appUtilisateur {
 		String nom = scanner.nextLine();
 		System.out.println("Entrez votre mot de passe : ");
 		String mdp = scanner.nextLine();
-		
-		try {	 			
+
+		try {
 			PreparedStatement ps = mapStatement.get("getEtudiant");
-			if(ps == null) {
+			if (ps == null) {
 				ps = conn.prepareStatement(" SELECT e.* FROM projet.etudiants e WHERE e.nom LIKE (?) ;");
 				mapStatement.put("getEtudiant", ps);
 			}
-			
+
 			connexionEtudiant.setString(1, nom);
 
 			try (ResultSet rs = connexionEtudiant.executeQuery()) {
 				if (rs.next()) {
 					mdpCrypte = rs.getString(4);
-					if(!BCrypt.checkpw(mdp, mdpCrypte)) {
+					if (!BCrypt.checkpw(mdp, mdpCrypte)) {
 						System.out.println("Mot de passe incorrect!");
-						connection();	
+						connection();
 					}
 					idUser = rs.getInt(1);
 					System.out.println("Connexion Réussie");
-				}				
+				}
 			} catch (SQLException se) {
 				se.printStackTrace();
 				System.exit(1);
@@ -143,9 +141,9 @@ public class appUtilisateur {
 
 		}
 		menu();
-		
+
 	}
-	
+
 	private void menu() {
 		int choix;
 		do {
@@ -154,9 +152,9 @@ public class appUtilisateur {
 			System.out.println("2 : S'inscrire à un examen");
 			System.out.println("3 : S'inscrire à tous les examens");
 			System.out.println("4 : Voir son horaire");
-			
+
 			choix = Integer.parseInt(scanner.nextLine());
-			switch(choix) {
+			switch (choix) {
 			case 1:
 				voirExamens();
 				break;
@@ -170,22 +168,23 @@ public class appUtilisateur {
 				voirHoraire();
 				break;
 			}
-		}while (choix > 0 && choix <4);
+		} while (choix > 0 && choix < 4);
 	}
-
 
 	private void voirExamens() {
 		System.out.println("\nAfficher les examens");
-		try {	 			
+		try {
 			PreparedStatement ps = mapStatement.get("listExams");
-			if(ps == null) {
-				ps = conn.prepareStatement(" SELECT e.code, e.nom, b.code, e.duree FROM projet.examens e, projet.blocs b WHERE b.bloc_id = e.bloc;");
+			if (ps == null) {
+				ps = conn.prepareStatement(
+						" SELECT e.code, e.nom, b.code, e.duree FROM projet.examens e, projet.blocs b WHERE b.bloc_id = e.bloc;");
 				mapStatement.put("listExams", ps);
 			}
 
 			try (ResultSet rs = voirExamen.executeQuery()) {
 				while (rs.next())
-					System.out.println(" " + rs.getString(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | " + rs.getString(4));
+					System.out.println(" " + rs.getString(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | "
+							+ rs.getString(4));
 			} catch (SQLException se) {
 				se.printStackTrace();
 				System.exit(1);
@@ -199,38 +198,56 @@ public class appUtilisateur {
 		}
 	}
 
-
 	private void inscriptionExamen() {
 		System.out.println("\nInscription à un examen");
 		System.out.println("Code de l'examen : ");
-		String examen = scanner.nextLine();		
+		String examen = scanner.nextLine();
 		try {
-						
+
 			inscriptionExamen.setInt(1, idUser);
 			inscriptionExamen.setString(2, examen);
-			
+
 		} catch (SQLException se) {
 			System.out.println("Erreur lors de l'insertion !");
 			se.printStackTrace();
 			System.exit(1);
 
 		}
-		
-	}
 
+	}
 
 	private void inscriptionsTousExamens() {
-		// TODO Auto-generated method stub
-		
-	}
+		System.out.println("\nInscription à tous les examens du bloc");
 
+		try {
+			PreparedStatement ps = mapStatement.get("inscriptionTousExamsBloc");
+			if (ps == null) {
+				ps = conn.prepareStatement(" SELECT projet.inscriptionExamensBloc(?);");
+				mapStatement.put("inscriptionTousExamsBloc", ps);
+			}
+
+			ps.setInt(1, idUser);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next())
+					System.out.println("Vos inscriptions ont bien été réalisées");
+			} catch (SQLException se) {
+				se.printStackTrace();
+				System.exit(1);
+			}
+
+		} catch (SQLException se) {
+			System.out.println("Erreur lors des inscriptions !");
+			se.printStackTrace();
+			System.exit(1);
+
+		}
+
+	}
 
 	private void voirHoraire() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-
-
-	
 }
