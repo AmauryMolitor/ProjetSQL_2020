@@ -6,7 +6,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -30,15 +32,15 @@ public class appCentrale {
 		this.conn = null;
 
 		try {
-			conn = DriverManager.getConnection(urlAmaury, "postgres", "kimilapatate");
-			//conn = DriverManager.getConnection(urlAxel, "postgres", "axel123");
+			//conn = DriverManager.getConnection(urlAmaury, "postgres", "kimilapatate");
+			conn = DriverManager.getConnection(urlAxel, "postgres", "axel123");
 		} catch (SQLException e) {
 			System.out.println("Impossible de joindre le server !");
 			System.exit(1);
 		}
 	}
 
-	public static void main(String[] args) throws InstantiationException, IllegalAccessException {
+	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ParseException {
 		appCentrale main = new appCentrale();
 
 		System.out.println("Bienvenue dans le Projet de Gestion de Base de Données 2020");
@@ -180,14 +182,53 @@ public class appCentrale {
 		
 	}
 	
-	private void encoderHeureExamen() {
+	private void encoderHeureExamen() throws ParseException {
 		System.out.println("\nEncode l'heure de l'examen");
 		System.out.println("Code de l'examen : ");
 		String code ="IPL654"; scanner.nextLine();
-		System.out.println("Durée de l'examen : (heures)");
-		int heure = Integer.parseInt(scanner.nextLine());
-		System.out.println("Durée de l'examen : (minutes)");
-		int minutes = Integer.parseInt(scanner.nextLine());
+		System.out.println("\n Jour de l'examen");
+		String jour = scanner.nextLine();
+		System.out.println("\n mois de l'examen");
+		String mois = scanner.nextLine();
+		System.out.println("Heure de l'examen :");
+		String heure = scanner.nextLine();
+		System.out.println("Minute à laquelle commence l'examen : (minutes)");
+		String minutes = scanner.nextLine();
+		String heureDebut ="2021-"+mois+"-"+jour+" "+heure+":"+minutes+":00";
+		String heureDeb = "2021"+mois+jour+heure+minutes+"00";
+	
+	//	String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(heureDebut));
+		long date = Long.parseLong(heureDeb);
+		System.out.println(date);
+		Timestamp test = new java.sql.Timestamp(date);
+		System.out.println(test);
+	//	Timestamp ts = Timestamp.valueOf(heureDebut);
+	//	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+	//	System.out.println(formatter.format(ts));
+	
+
+	
+		try {
+			PreparedStatement ps = conn.prepareStatement(" SELECT projet.encoderHeure(?,?);");			
+			ps.setString(1,code);
+			ps.setTimestamp(2,new java.sql.Timestamp(date));
+			try (ResultSet rs = ps.executeQuery()){
+				if(rs.next())
+					System.out.println("L'heure de début a bien été ajouté à votre examen, la date en question est : " + rs );
+				}
+			
+			catch (SQLException se) {
+				System.out.println(se);
+				se.printStackTrace();
+				System.exit(1);
+				}
+		}
+		catch(SQLException se) {
+			System.out.println("Erreur lors de l'update de la table examens !");
+			se.printStackTrace();
+			System.exit(1);
+		}
+		
 		
 	}
 
