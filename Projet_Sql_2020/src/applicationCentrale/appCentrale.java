@@ -143,16 +143,16 @@ public class appCentrale {
 		if(heures > 0) 
 			minutes += heures*60;
 		
-		String interval = "INTERVAL '" + minutes + "' MINUTE";
-		System.out.println(interval);
+		Object interval = "INTERVAL '" + minutes + "' MINUTE";
+
 		int interv = minutes;
 		
 		try {
 			PreparedStatement ps = mapStatement.get("insertExamen");
 			if (ps == null) {
-				//ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, INTERVAL '?' MINUTE);");
+				ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, INTERVAL '" + interv + "' MINUTE);");
 				//ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, ?::INTERVAL);");
-				ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, ?);");
+				//ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, ?);");
 				mapStatement.put("insertExamen", ps);
 			}
 			ps.setString(1, code);
@@ -160,7 +160,7 @@ public class appCentrale {
 			ps.setString(3, bloc);
 			ps.setBoolean(4, machines);
 			//ps.setString(5, interval);
-			ps.setObject(5, interval);
+			//ps.setObject(5, interval);
 			//ps.setInt(5, interv);
 			System.out.println(ps);
 			
@@ -177,7 +177,6 @@ public class appCentrale {
 			System.out.println("Erreur lors de l'insertion !");
 			se.printStackTrace();
 			System.exit(1);
-
 		}
 		
 	}
@@ -233,7 +232,36 @@ public class appCentrale {
 	}
 
 	private void reserverLocal() {
-		// TODO Auto-generated method stub
+		System.out.println("\nRéserver un local");
+		System.out.println("Code de l'examen : ");
+		String examen = scanner.nextLine();
+		System.out.println("Nom du local : ");
+		String local = scanner.nextLine();
+		
+		try {
+			PreparedStatement ps = mapStatement.get("insertReservation");
+			if (ps == null) {
+				ps = conn.prepareStatement(" SELECT projet.reserverLocal(?,?);");
+				mapStatement.put("insertExamen", ps);
+			}
+			ps.setString(1, examen);
+			ps.setString(2, local);
+
+			
+			try (ResultSet rs = ps.executeQuery()){
+				if(rs.next())
+					System.out.println("Votre reservation a bien été effectuée" );
+				} 
+			catch (SQLException se) {
+				se.printStackTrace();
+				System.exit(1);
+				}
+			
+		}catch (SQLException se) {
+			System.out.println("Erreur lors de la réservation !");
+			se.printStackTrace();
+			System.exit(1);
+		}
 		
 	}
 	
