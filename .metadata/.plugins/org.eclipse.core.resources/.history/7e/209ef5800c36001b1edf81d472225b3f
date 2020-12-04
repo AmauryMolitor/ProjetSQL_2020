@@ -185,11 +185,31 @@ public class appCentrale {
 		System.out.println("\nEncode l'heure de l'examen");
 		System.out.println("Code de l'examen : ");
 		String code = scanner.nextLine();
-		
+		/*System.out.println("\n Jour de l'examen");
+		String jour = scanner.nextLine();
+		System.out.println("\n mois de l'examen");
+		String mois = scanner.nextLine();
+		System.out.println("Heure de l'examen :");
+		String heure = scanner.nextLine();
+		System.out.println("Minute à laquelle commence l'examen : (minutes)");
+		String minutes = scanner.nextLine();
+		String heureDebut ="2021-"+mois+"-"+jour+" "+heure+":"+minutes+":00";
+		String heureDeb = "2021"+mois+jour+heure+minutes+"00";
+	*/
 		System.out.print("Entrez la date et l'heure de début de l'examen (au format YYYY-MM-DD hh:mm) : ");
 		String HeureDebut = scanner.nextLine() + ":00";
 		Timestamp ts = Timestamp.valueOf(HeureDebut);
 		System.out.println(ts);
+	//	String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(heureDebut));
+		//long date = Long.parseLong(heureDeb);
+		//System.out.println(date);
+		//Timestamp test = new java.sql.Timestamp(date);
+		//System.out.println(test);
+	//	
+	//	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+	//	System.out.println(formatter.format(ts));
+	
+
 	
 		try {
 			PreparedStatement ps = conn.prepareStatement(" SELECT projet.encoderHeure(?,?);");			
