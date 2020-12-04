@@ -203,13 +203,13 @@ public class appCentrale {
 			catch (SQLException se) {
 				System.out.println(se);
 				se.printStackTrace();
-				//System.exit(1);
+				System.exit(1);
 				}
 		}
 		catch(SQLException se) {
 			System.out.println("Erreur lors de l'update de la table examens !");
 			se.printStackTrace();
-			 //System.exit(1);
+			System.exit(1);
 		}
 		
 		
@@ -303,7 +303,7 @@ public class appCentrale {
 					System.out.println(" " + rs.getTimestamp(1) + " | " + rs.getString(2) + " | " + rs.getString(3));
 			} catch (SQLException se) {
 				se.printStackTrace();
-			
+				System.exit(1);
 			}
 
 		} catch (SQLException se) {
