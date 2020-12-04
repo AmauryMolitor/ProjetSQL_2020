@@ -175,6 +175,15 @@ $$ LANGUAGE plpgsql;
 
 -- SELECT projet.inscriptionExamensBloc(4);
 
+-- fonction encoder heure examen
+CREATE OR REPLACE FUNCTION projet.encoderheure(_code VARCHAR,_heure TIMESTAMP) returns VOID AS $$
+DECLARE
+BEGIN 
+   UPDATE projet.examens 
+   SET heure_debut=(_heure) 
+   WHERE examens.code =(_code);
+END; 
+$$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION projet.reserverLocal(_code_exam VARCHAR, _code_local varchar) RETURNS VOID AS $$
 DECLARE 
@@ -198,17 +207,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 --SELECT projet.reserverLocal('IPL146', 'A023');
-
-
--- fonction encoder heure examen
-CREATE OR REPLACE FUNCTION projet.encoderheure(_code VARCHAR,_heure TIMESTAP) returns VOID AS $$
-DECLARE
-BEGIN 
-   UPDATE projet.examens 
-   SET heure_debut=(_heure) 
-   WHERE examens.code =(_code);
-END; 
-$$ LANGUAGE plpgsql;
 
 --DISPLAY-------------------------------------------------------------
 
@@ -259,7 +257,6 @@ CREATE OR REPLACE VIEW projet.displayExamens AS
 	GROUP BY e.examen_id, b.code
 	ORDER BY e.heure_debut;
 --SELECT heure_debut, code_examen, nbr_locaux from projet.displayExamens WHERE code_bloc LIKE 'BIN3'
-
 
 --Visualiser tous les examens d'un bloc (app centrale 6)
 CREATE OR REPLACE VIEW projet.displayExamensParLocal AS
@@ -388,7 +385,8 @@ THEN
 
 FOR verif_exam IN SELECT * FROM projet.reservations r WHERE r.local_id = NEW.local_id LOOP
 
-IF ( SELECT e.heure_debut FROM projet.examens e WHERE e.examen_id = verif_exam.examen_id ) = exam.heure_debut 
+IF ( SELECT e.heure_debut FROM projet.examens e WHERE e.examen_id = verif_exam.examen_id ) BETWEEN exam.heure_debut 
+	AND  exam.heure_debut+exam.duree
 
 THEN
 	RAISE 'erreur: examen déjà en cours dans ce local à ce moment là.';
@@ -429,14 +427,17 @@ insert into projet.locaux values (default, 'A023', 30, true);
 --insert into projet.inscriptions values (1, 1);
  insert into projet.examens values (DEFAULT,'IPL146', 'examen de java',1,true,'2020-12-12 10:00:00',INTERVAL '3' HOUR, default);
  insert into projet.examens values (DEFAULT,'IPL147', 'examen de java2',1,true,'2020-12-12 10:00:00',INTERVAL '3' HOUR, default);
- SELECT projet.insertExam('IPL148', 'examen de sql', 'BIN3', true,INTERVAL '3' HOUR);
- SELECT projet.insertExam('IPL149', 'examen de sql2', 'BIN3', false,INTERVAL '3' HOUR);
+ SELECT projet.insertExamen('IPL148', 'examen de sql', 'BIN3', true,INTERVAL '3' HOUR);
+ SELECT projet.insertExamen('IPL149', 'examen de sql2', 'BIN3', false,INTERVAL '3' HOUR);
  SELECT projet.insertEtudiants('a@gmail.com', 'etudiant1', 'mdp', 'BIN3');
  SELECT projet.insertEtudiants('b@gmail.com', 'etudiant2', 'mdp', 'BIN3');
  SELECT projet.insertEtudiants('c@gmail.com', 'etudiant3', 'mdp', 'BIN3');
  SELECT projet.insertInscription(1,'IPL148');
  SELECT projet.inscriptionUnExamen(2,'IPL148');
- SELECT projet.inscriptionExamensBloc(3);
+--SELECT projet.inscriptionExamensBloc(3);
+ SELECT projet.encoderheure('IPL148','2021-02-03 09:45:00.0');
+
+ 
 
 
 
