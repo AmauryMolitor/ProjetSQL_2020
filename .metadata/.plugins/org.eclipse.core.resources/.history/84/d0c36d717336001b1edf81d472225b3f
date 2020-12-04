@@ -267,7 +267,8 @@ public class appUtilisateur {
                     System.out.println(" " + rs.getString(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | "
                             + rs.getTimestamp(4) + " | " + rs.getString(5));
             } catch (SQLException se) {
-            	System.out.println(se);
+                se.printStackTrace();
+                System.exit(1);
             }
 
         } catch (SQLException se) {

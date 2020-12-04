@@ -113,7 +113,7 @@ public class appCentrale {
 				if (rs.next())
 					System.out.println("Votre local a bien été ajouté, son id est : " + rs.getInt(1));
 			} catch (SQLException se) {
-				System.out.println(se);
+				se.printStackTrace();
 			
 			}
 
@@ -165,7 +165,7 @@ public class appCentrale {
 					System.out.println("Votre examen a bien été ajoutée, son id est : " +rs.getInt(1) );
 				} 
 			catch (SQLException se) {
-				System.out.println(se);
+				se.printStackTrace();
 				
 				}
 			
@@ -185,7 +185,7 @@ public class appCentrale {
 		System.out.print("Entrez la date et l'heure de début de l'examen (au format YYYY-MM-DD hh:mm) : ");
 		String HeureDebut = scanner.nextLine() + ":00";
 		Timestamp ts = Timestamp.valueOf(HeureDebut);
-		
+		System.out.println(ts);
 	
 		try {
 			PreparedStatement ps = conn.prepareStatement(" SELECT projet.encoderHeure(?,?);");			
@@ -193,7 +193,7 @@ public class appCentrale {
 			ps.setTimestamp(2,ts);
 			try (ResultSet rs = ps.executeQuery()){
 				if(rs.next())
-					System.out.println("L'heure de début a bien été ajouté à votre examen");
+					System.out.println("L'heure de début a bien été ajouté à votre examen, la date en question est : " + rs );
 				}
 			
 			catch (SQLException se) {
@@ -265,7 +265,7 @@ public class appCentrale {
 				while (rs.next())
 					System.out.println(" " + rs.getTimestamp(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | " + rs.getInt(4) );
 			} catch (SQLException se) {
-				System.out.println(se);
+				
 				
 			}
 
@@ -298,7 +298,7 @@ public class appCentrale {
 				while (rs.next())
 					System.out.println(" " + rs.getTimestamp(1) + " | " + rs.getString(2) + " | " + rs.getString(3));
 			} catch (SQLException se) {
-				System.out.println(se);
+				
 			}
 
 		} catch (SQLException se) {
@@ -325,14 +325,14 @@ public class appCentrale {
 				while (rs.next())
 					System.out.println(" " + rs.getInt(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | " + rs.getInt(4) + " | " + rs.getBoolean(5) + " | " + rs.getTimestamp(6) + " | " + rs.getString(7));
 			} catch (SQLException se) {
-				System.out.println(se);
+				se.printStackTrace();
 				
 			}
 
 		} catch (SQLException se) {
 			System.out.println("Erreur lors de l'affichage !");
 			se.printStackTrace();
-		
+		//	System.exit(1);
 
 		}
 		
@@ -353,14 +353,14 @@ public class appCentrale {
                 while (rs.next())
                     System.out.println(" " + rs.getString(1) + " | " + rs.getInt(2));
             } catch (SQLException se) {
-            	System.out.println(se);
+                se.printStackTrace();
 
             }
 
         } catch (SQLException se) {
             System.out.println("Erreur lors de l'affichage !");
             se.printStackTrace();
-       
+        //    System.exit(1);
 
         }
 

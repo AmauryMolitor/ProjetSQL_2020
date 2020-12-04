@@ -210,7 +210,8 @@ public class appUtilisateur {
                 if (rs.next())
                     System.out.println("Votre inscription a bien été réalisée");
             } catch (SQLException se) {
-            	System.out.println(se);
+                se.printStackTrace();
+               
             }
 		} catch (SQLException se) {
 			System.out.println("Erreur lors de l'insertion !");
@@ -237,7 +238,8 @@ public class appUtilisateur {
 				if (rs.next())
 					System.out.println("Vos inscriptions ont bien été réalisées");
 			} catch (SQLException se) {
-				System.out.println(se);
+				se.printStackTrace();
+				
 			}
 
 		} catch (SQLException se) {
@@ -267,7 +269,8 @@ public class appUtilisateur {
                     System.out.println(" " + rs.getString(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | "
                             + rs.getTimestamp(4) + " | " + rs.getString(5));
             } catch (SQLException se) {
-            	System.out.println(se);
+                se.printStackTrace();
+                System.exit(1);
             }
 
         } catch (SQLException se) {
