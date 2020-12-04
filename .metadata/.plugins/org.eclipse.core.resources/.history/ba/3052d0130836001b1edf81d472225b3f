@@ -199,7 +199,6 @@ public class appCentrale {
 		System.out.print("Entrez la date et l'heure de début de l'examen (au format YYYY-MM-DD hh:mm) : ");
 		String HeureDebut = scanner.nextLine() + ":00";
 		Timestamp ts = Timestamp.valueOf(HeureDebut);
-		System.out.println(ts);
 	//	String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(heureDebut));
 		//long date = Long.parseLong(heureDeb);
 		//System.out.println(date);

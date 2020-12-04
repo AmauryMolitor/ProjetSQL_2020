@@ -199,6 +199,17 @@ END;
 $$ LANGUAGE plpgsql;
 --SELECT projet.reserverLocal('IPL146', 'A023');
 
+
+-- fonction encoder heure examen
+CREATE OR REPLACE FUNCTION projet.encoderheure(_code VARCHAR,_heure TIMESTAP) returns VOID AS $$
+DECLARE
+BEGIN 
+   UPDATE projet.examens 
+   SET heure_debut=(_heure) 
+   WHERE examens.code =(_code);
+END; 
+$$ LANGUAGE plpgsql;
+
 --DISPLAY-------------------------------------------------------------
 
 
