@@ -158,7 +158,7 @@ public class appCentrale {
 			ps.setString(3, bloc);
 			ps.setBoolean(4, machines);
 			ps.setInt(5, interv);
-			
+			System.out.println(ps);
 			
 			try (ResultSet rs = ps.executeQuery()){
 				if(rs.next())
@@ -198,7 +198,7 @@ public class appCentrale {
 			
 			catch (SQLException se) {
 				System.out.println(se);
-			
+			//	se.printStackTrace();
 				
 				}
 		}
@@ -233,7 +233,7 @@ public class appCentrale {
 					System.out.println("Votre reservation a bien été effectuée" );
 				} 
 			catch (SQLException se) {
-				System.out.println(se);
+				se.printStackTrace();
 				
 				}
 			
@@ -265,7 +265,7 @@ public class appCentrale {
 				while (rs.next())
 					System.out.println(" " + rs.getTimestamp(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | " + rs.getInt(4) );
 			} catch (SQLException se) {
-				
+				se.printStackTrace();
 				
 			}
 
@@ -298,7 +298,8 @@ public class appCentrale {
 				while (rs.next())
 					System.out.println(" " + rs.getTimestamp(1) + " | " + rs.getString(2) + " | " + rs.getString(3));
 			} catch (SQLException se) {
-				
+				se.printStackTrace();
+			
 			}
 
 		} catch (SQLException se) {
@@ -339,32 +340,9 @@ public class appCentrale {
 	}
 	
 	private void voirNombreExamenPasCompletsParBloc() {
-        System.out.println("\nVisualiser le nombre d'examens pas complets par bloc");
-        System.out.println("Code bloc | Nombre d'examens pas complets");
-        try {
-            PreparedStatement ps = mapStatement.get("nbrExamsPasComplets");
-
-            if(ps == null) {
-                ps = conn.prepareStatement(" SELECT b.code, b.nbr_exam_non_complet from projet.blocs b;");
-                mapStatement.put("nbrExamsPasComplets", ps);
-            }
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next())
-                    System.out.println(" " + rs.getString(1) + " | " + rs.getInt(2));
-            } catch (SQLException se) {
-                se.printStackTrace();
-
-            }
-
-        } catch (SQLException se) {
-            System.out.println("Erreur lors de l'affichage !");
-            se.printStackTrace();
-        //    System.exit(1);
-
-        }
-
-    }
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 	

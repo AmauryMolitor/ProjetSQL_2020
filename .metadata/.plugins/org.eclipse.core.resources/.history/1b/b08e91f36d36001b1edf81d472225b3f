@@ -168,7 +168,7 @@ public class appUtilisateur {
 				voirHoraire();
 				break;
 			}
-		} while (choix > 0 && choix < 5);
+		} while (choix > 0 && choix < 4);
 	}
 
 	private void voirExamens() {
@@ -239,7 +239,7 @@ public class appUtilisateur {
 					System.out.println("Vos inscriptions ont bien été réalisées");
 			} catch (SQLException se) {
 				se.printStackTrace();
-				
+				System.exit(1);
 			}
 
 		} catch (SQLException se) {
