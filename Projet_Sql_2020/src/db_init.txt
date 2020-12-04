@@ -441,6 +441,19 @@ insert into projet.locaux values (default, 'A023', 30, true);
  SELECT projet.encoderheure('IPL148','2021-02-03 09:45:00.0');
 
  
+ 
+ 
+--INSERT DEMO-------------------
+INSERT into projet.formations VALUES (default, 'bachelier en informatique de gestion', 'IPL');
+INSERT INTO projet.blocs VALUES (default, 'Bloc 1', 1, default);
+INSERT INTO projet.blocs VALUES (default, 'Bloc 2', 1, default);
+INSERT INTO projet.examens VALUES (default, 'IPL100', 'APOO', 1, false, NULL, INTERVAL '120' MINUTE, default);
+INSERT INTO projet.examens VALUES (default, 'IPL150', 'Algo', 1, true, NULL, INTERVAL '240' MINUTE, default);
+INSERT INTO projet.examens VALUES (default, 'IPL200', 'Javascript', 2, true, NULL, INTERVAL '120' MINUTE, default);
+INSERT INTO projet.locaux VALUES (default, 'A017', 2, true);
+INSERT INTO projet.locaux VALUES (default, 'A019', 1, true);
+
+--étudiants à inscire dans Eclipse pour le mdp, sinon ne fonctionne pas avec BCrypt
 
 
 
