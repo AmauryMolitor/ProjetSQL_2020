@@ -480,32 +480,6 @@ FOR EACH ROW EXECUTE PROCEDURE verif_local();
 
 
 
---INSERT--------------------------------------------------------------
-
---insert into projet.formations values (default, 'info', 'ipl');
---insert into projet.blocs values (default, 'BIN3', 1, default);
---insert into projet.examens values ( default, 'IPL123', 'examen de sql', 1, true, '2020-12-12 10:00:00', INTERVAL '3' HOUR, default);
-
---insert into projet.locaux values (default, 'A023', 30, true);
-
---insert into projet.reservations values (1,1);
-
---insert into projet.etudiants values (default, 'jean', 'jean@gmail.com', 'mdp', 1);
-
---insert into projet.inscriptions values (1, 1);
--- insert into projet.examens values (DEFAULT,'IPL146', 'examen de java',1,true,'2020-12-12 10:00:00',INTERVAL '3' HOUR, default);
--- insert into projet.examens values (DEFAULT,'IPL147', 'examen de java2',1,true,'2020-12-12 09:00:00',INTERVAL '3' HOUR, default);
--- SELECT projet.insertExamen('IPL148', 'examen de sql', 'BIN3', true,3);
--- SELECT projet.insertExamen('IPL149', 'examen de sql2', 'BIN3', false,3);
--- SELECT projet.insertEtudiants('a@gmail.com', 'etudiant1', 'mdp', 'BIN3');
--- SELECT projet.insertEtudiants('b@gmail.com', 'etudiant2', 'mdp', 'BIN3');
--- SELECT projet.insertEtudiants('c@gmail.com', 'etudiant3', 'mdp', 'BIN3');
--- SELECT projet.insertInscription(1,'IPL146');
--- SELECT projet.inscriptionUnExamen(2,'IPL148');
---SELECT projet.inscriptionExamensBloc(3);
--- SELECT * FROM projet.reservations
-
-
 --INSERT DEMO --------------------
 
 INSERT into projet.formations VALUES (default, 'bachelier en informatique de gestion', 'IPL');
