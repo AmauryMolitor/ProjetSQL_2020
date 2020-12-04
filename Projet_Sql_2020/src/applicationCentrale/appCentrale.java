@@ -32,8 +32,8 @@ public class appCentrale {
 		this.conn = null;
 
 		try {
-			//conn = DriverManager.getConnection(urlAmaury, "postgres", "kimilapatate");
-			conn = DriverManager.getConnection(urlAxel, "postgres", "axel123");
+			conn = DriverManager.getConnection(urlAmaury, "postgres", "kimilapatate");
+			//conn = DriverManager.getConnection(urlAxel, "postgres", "axel123");
 		} catch (SQLException e) {
 			System.out.println("Impossible de joindre le server !");
 			System.exit(1);
@@ -128,17 +128,17 @@ public class appCentrale {
 	private void ajouterExamen() {
 		System.out.println("\nAjouter un examen");
 		System.out.println("Code de l'examen : ");
-		String code = "IPL654"; //scanner.nextLine();
+		String code = scanner.nextLine();
 		System.out.println("Nom de l'examen : ");
-		String nom = "allo"; //scanner.nextLine();
+		String nom = scanner.nextLine();
 		System.out.println("Bloc de l'examen : ");
-		String bloc = "BIN3"; //scanner.nextLine();
+		String bloc = scanner.nextLine();
 		System.out.println("Examen sur machines : (true|false)");
-		Boolean machines = true; //Boolean.parseBoolean(scanner.nextLine());
+		Boolean machines = Boolean.parseBoolean(scanner.nextLine());
 		System.out.println("Durée de l'examen : (heures)");
-		int heures = 3; //Integer.parseInt(scanner.nextLine());
+		int heures = Integer.parseInt(scanner.nextLine());
 		System.out.println("Durée de l'examen : (minutes)");
-		int minutes = 0; //Integer.parseInt(scanner.nextLine());
+		int minutes = Integer.parseInt(scanner.nextLine());
 		
 		if(heures > 0) 
 			minutes += heures*60;
@@ -150,18 +150,14 @@ public class appCentrale {
 		try {
 			PreparedStatement ps = mapStatement.get("insertExamen");
 			if (ps == null) {
-				ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, INTERVAL '" + interv + "' MINUTE);");
-				//ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, ?::INTERVAL);");
-				//ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, ?);");
+				ps = conn.prepareStatement(" SELECT projet.insertExamen(?, ?, ?, ?, ?);");
 				mapStatement.put("insertExamen", ps);
 			}
 			ps.setString(1, code);
 			ps.setString(2, nom);
 			ps.setString(3, bloc);
 			ps.setBoolean(4, machines);
-			//ps.setString(5, interval);
-			//ps.setObject(5, interval);
-			//ps.setInt(5, interv);
+			ps.setInt(5, interv);
 			System.out.println(ps);
 			
 			try (ResultSet rs = ps.executeQuery()){
