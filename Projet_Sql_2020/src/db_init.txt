@@ -326,6 +326,11 @@ THEN
 
 END IF;
 
+IF EXISTS (SELECT * FROM projet.reservations r WHERE r.examen_id=NEW.examen_id)
+THEN 
+	RAISE 'erreur : un local est déjà réservé pour cet examen, pas de changement d heure possible';
+END IF;	
+
 RETURN NEW; 
 
 END; 
@@ -345,6 +350,7 @@ CREATE OR REPLACE FUNCTION verif_local() RETURNS TRIGGER AS $$
 
 DECLARE 
 verif_exam RECORD;
+verif_exam_jour RECORD;
 exam RECORD;
 tulpe_local RECORD;
 old_exam RECORD;
@@ -457,4 +463,5 @@ insert into projet.locaux values (default, 'A023', 30, true);
  SELECT projet.insertInscription(1,'IPL146');
  SELECT projet.inscriptionUnExamen(2,'IPL148');
 --SELECT projet.inscriptionExamensBloc(3);
- SELECT projet.encoderheure('IPL148','2021-02-03 09:45:00.0');
+ SELECT * FROM projet.reservations
+ 
