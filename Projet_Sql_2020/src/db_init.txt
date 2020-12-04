@@ -168,7 +168,7 @@ DECLARE
 BEGIN 
     SELECT b.bloc_id 
     FROM projet.blocs b, projet.etudiants e
-    WHERE b.bloc_id = e.bloc AND e.bloc = _id_etudiant into b_id;
+    WHERE b.bloc_id = e.bloc AND e.etudiant_id = _id_etudiant into b_id;
 
     FOR exam IN SELECT e.examen_id FROM projet.examens e WHERE e.bloc = b_id  LOOP 
         INSERT INTO projet.inscriptions VALUES (exam.examen_id,_id_etudiant); 
