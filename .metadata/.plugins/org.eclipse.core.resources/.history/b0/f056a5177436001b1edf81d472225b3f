@@ -128,9 +128,6 @@ public class appUtilisateur {
 					}
 					idUser = rs.getInt(1);
 					System.out.println("Connexion Réussie");
-				}else {
-					System.out.println(" Mauvais ou aucun identifiant");
-					connection();
 				}
 			} catch (SQLException se) {
 				se.printStackTrace();
