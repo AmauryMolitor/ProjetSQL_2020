@@ -151,7 +151,7 @@ BEGIN
 	   	FROM projet.examens e
 	   	WHERE e.examen_id = ex_id) IS NOT NULL	
 	then 	
-		RAISE 'errer : heure dÃ©jÃ  encodÃ©e';
+		RAISE 'errer : heure déjà encodée';
 	else	
 		INSERT INTO projet.inscriptions VALUES (ex_id, _etudiant_id);
 	end if;
@@ -246,9 +246,9 @@ SELECT projet.displayHoraire(1);
 
 --VIEW----------------------------------------------------------
 
---Visualier tous les examens (application utilisateur, connectÃ© :1)
+--Visualier tous les examens (application utilisateur, connecté :1)
 CREATE OR REPLACE VIEW projet.displayTousExamens AS
-	SELECT e.code AS "Code examen" , e.nom AS "Nom examen", e.duree AS "DurÃ©e"
+	SELECT e.code AS "Code examen" , e.nom AS "Nom examen", e.duree AS "Durée"
 	FROM projet.examens e;
 
 
@@ -347,6 +347,8 @@ DECLARE
 verif_exam RECORD;
 exam RECORD;
 tulpe_local RECORD;
+old_exam RECORD;
+
 
 BEGIN
  SELECT l.local_id,l.nom,l.nb_places,l.machines FROM projet.locaux l WHERE l.local_id = NEW.local_id INTO tulpe_local;
@@ -358,7 +360,7 @@ tulpe_local.machines = FALSE AND exam.sur_machine = TRUE
 
 THEN 
 
-	RAISE 'erreur :examen sur machine, besoin d un local Ã©quipÃ© !';
+	RAISE 'erreur :examen sur machine, besoin d un local équipé !';
 
 
 END IF;
@@ -369,7 +371,7 @@ exam.completement_reserve = TRUE
 
 THEN
 
-	RAISE 'erreur : examen dÃ©jÃ  complÃ¨tement rÃ©servÃ© ';
+	RAISE 'erreur : examen déjà complètement réservé ';
 
 END IF;
 
@@ -379,20 +381,37 @@ exam.heure_debut IS NULL
 
 THEN 
 
-	RAISE 'erreur : Heure de dÃ©but d exam pas encore fixÃ©e!';
+	RAISE 'erreur : Heure de début d exam pas encore fixée!';
+END IF;
+
+IF EXISTS (SELECT * FROM projet.reservations)
+THEN
+FOR verif_exam_jour IN SELECT * FROM projet.reservations r WHERE r.examen_id <>NEW.examen_id LOOP
+
+SELECT * FROM projet.examens  WHERE  examen_id = verif_exam_jour.examen_id  into old_exam;
+
+IF DATE(exam.heure_debut)=DATE(old_exam.heure_debut)
+THEN
+	RAISE 'erreur: un examen du même bloc se déroule déjà le même jour';
+	
+END IF;	
+
+END LOOP;
+
 END IF;
 
 IF EXISTS ( SELECT * FROM projet.reservations r WHERE r.local_id = NEW.local_id)
 
 THEN
 
-FOR verif_exam IN SELECT * FROM projet.reservations r WHERE r.local_id = NEW.local_id LOOP
-
-IF ( SELECT e.heure_debut FROM projet.examens e WHERE e.examen_id = verif_exam.examen_id ) BETWEEN exam.heure_debut 
-	AND  exam.heure_debut+exam.duree
+FOR verif_exam IN SELECT * FROM projet.reservations r WHERE r.local_id = NEW.local_id AND r.examen_id <> NEW.examen_id LOOP
+	SELECT * FROM projet.examens  WHERE  examen_id = verif_exam.examen_id  into old_exam;
+--IF ( SELECT e.heure_debut FROM projet.examens e WHERE e.examen_id = verif_exam.examen_id ) >= exam.heure_debut 
+--	AND ( SELECT e.heure_debut FROM projet.examens e WHERE e.examen_id = verif_exam.examen_id ) < exam.heure_debut+exam.duree
+IF ((exam.heure_debut,exam.duree::INTERVAL) OVERLAPS (old_exam.heure_debut,old_exam.duree::INTERVAL)) IS TRUE
 
 THEN
-	RAISE 'erreur: examen dÃ©jÃ  en cours dans ce local Ã  ce moment lÃ .';
+	RAISE 'erreur: examen déjà en cours dans ce local à ce moment là.';
 
 END IF;
 	
@@ -429,36 +448,13 @@ insert into projet.locaux values (default, 'A023', 30, true);
 
 --insert into projet.inscriptions values (1, 1);
  insert into projet.examens values (DEFAULT,'IPL146', 'examen de java',1,true,'2020-12-12 10:00:00',INTERVAL '3' HOUR, default);
- insert into projet.examens values (DEFAULT,'IPL147', 'examen de java2',1,true,'2020-12-12 10:00:00',INTERVAL '3' HOUR, default);
- SELECT projet.insertExamen('IPL148', 'examen de sql', 'BIN3', true,INTERVAL '3' HOUR);
- SELECT projet.insertExamen('IPL149', 'examen de sql2', 'BIN3', false,INTERVAL '3' HOUR);
+ insert into projet.examens values (DEFAULT,'IPL147', 'examen de java2',1,true,'2020-12-12 09:00:00',INTERVAL '3' HOUR, default);
+ SELECT projet.insertExamen('IPL148', 'examen de sql', 'BIN3', true,3);
+ SELECT projet.insertExamen('IPL149', 'examen de sql2', 'BIN3', false,3);
  SELECT projet.insertEtudiants('a@gmail.com', 'etudiant1', 'mdp', 'BIN3');
  SELECT projet.insertEtudiants('b@gmail.com', 'etudiant2', 'mdp', 'BIN3');
  SELECT projet.insertEtudiants('c@gmail.com', 'etudiant3', 'mdp', 'BIN3');
- SELECT projet.insertInscription(1,'IPL148');
+ SELECT projet.insertInscription(1,'IPL146');
  SELECT projet.inscriptionUnExamen(2,'IPL148');
 --SELECT projet.inscriptionExamensBloc(3);
  SELECT projet.encoderheure('IPL148','2021-02-03 09:45:00.0');
-
- 
- 
- 
---INSERT DEMO-------------------
-INSERT into projet.formations VALUES (default, 'bachelier en informatique de gestion', 'IPL');
-INSERT INTO projet.blocs VALUES (default, 'Bloc 1', 1, default);
-INSERT INTO projet.blocs VALUES (default, 'Bloc 2', 1, default);
-INSERT INTO projet.examens VALUES (default, 'IPL100', 'APOO', 1, false, NULL, INTERVAL '120' MINUTE, default);
-INSERT INTO projet.examens VALUES (default, 'IPL150', 'Algo', 1, true, NULL, INTERVAL '240' MINUTE, default);
-INSERT INTO projet.examens VALUES (default, 'IPL200', 'Javascript', 2, true, NULL, INTERVAL '120' MINUTE, default);
-INSERT INTO projet.locaux VALUES (default, 'A017', 2, true);
-INSERT INTO projet.locaux VALUES (default, 'A019', 1, true);
-
---étudiants à inscire dans Eclipse pour le mdp, sinon ne fonctionne pas avec BCrypt
-
-
-
-
-
-
-
-

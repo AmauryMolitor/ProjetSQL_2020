@@ -32,7 +32,7 @@ public class appCentrale {
 		this.conn = null;
 
 		try {
-		//	conn = DriverManager.getConnection(urlAmaury, "postgres", "kimilapatate");
+			//conn = DriverManager.getConnection(urlAmaury, "postgres", "kimilapatate");
 			conn = DriverManager.getConnection(urlAxel, "postgres", "axel123");
 		} catch (SQLException e) {
 			System.out.println("Impossible de joindre le server !");
